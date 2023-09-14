@@ -26,15 +26,18 @@ async function login(accountID, password) {
             body: JSON.stringify({accountID: accountID, password: password})
         });
 
-        const data = await response.json();
-        if (data.status === 0) {
-            return 0;
+        const responseData = await response.json();
+        if (responseData.status === 0) {
+            return {
+                id: responseData.id,
+                msg: responseData.msg
+            }
         } else {
-            return data;
+            throw new Error(responseData.error);
         }
 
     } catch (error) {
-        throw new Error(error);
+        throw error;
     }
 }
 
@@ -49,14 +52,17 @@ async function register(email, username, password) {
             body: JSON.stringify({email: email, username: username, password: password})
         });
 
-        const data = await response.json();
-        if (data.status === 0) {
-            return 0;
+        const responseData = await response.json();
+        if (responseData.status === 0) {
+            return {
+                id: responseData.id,
+                msg: responseData.msg
+            }
         } else {
-            return data;
+            throw new Error(responseData.error);
         }
     } catch (error) {
-        throw new Error(error);
+        throw error;
     }
 }
 

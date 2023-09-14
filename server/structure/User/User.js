@@ -188,16 +188,21 @@ class User {
         }
     }
 
+    // method authenticate is used to authenticate a login request
+    // @params: accountID (username or email), password
+    // @return: Int
+    //      -> true if successfully authenticate
+    //      -> false if not
     static async authenticate(accountID, password) {
         let accountIDField;
         
         if (accountID.includes('@')) accountIDField = 'email';
         else accountIDField = 'username';
 
-        const query = `SELECT uid FROM users WHERE ${accountIDField}=${accountID} AND password=${password}`;
+        const query = `SELECT uid FROM users WHERE ${accountIDField}='${accountID}' AND password='${password}'`;
         try {
             const result = await execQuery(query);
-            if (result) return true;
+            if (result.length === 1) return true;
             else return false;
         } catch (error) {
             throw error;
@@ -208,26 +213,23 @@ class User {
     // @params: email, username, password
     // @return: Int
     //      -> 0 if successfully registered new user
-    //      -> 1 if email is already registered
+    //      -> 1 both email and username is already registered
     //      -> 2 if username is already registered
-    //      -> 3 if both email and username is already registered
+    //      -> 3 if email is already registered if 
     static async registerNewUser(email, username, password) {
         const emailVerificationQuery = `SELECT uid FROM users WHERE email='${email}'`;
         const usernameVerificationQuery = `SELECT uid FROM users WHERE username='${username}'`;
         try {
             const emailVerificationResult = await execQuery(emailVerificationQuery);
             const usernameVerificationResult = await execQuery(usernameVerificationQuery);
-            console.log(emailVerificationResult.length);
-            console.log(usernameVerificationResult.length);
-            if (emailVerificationResult.length !== 0 && usernameVerificationResult.length !== 0) return 3;
-            else if (emailVerificationResult.length !== 0) return 2;
-            else if (usernameVerificationResult.length !== 0) return 1;
+            if (emailVerificationResult.length !== 0 && usernameVerificationResult.length !== 0) return 1;
+            else if (usernameVerificationResult.length !== 0) return 2;
+            else if (emailVerificationResult.length !== 0) return 3;
             else {
                 const newUID = await generateNewUID();
                 const registeringQuery = `INSERT INTO users (uid, email, username, password, created_at) 
                     VALUES (${newUID}, '${email}', '${username}', '${password}', '${dateToDatetime(new Date())}')`;
                 const result = await execQuery(registeringQuery);
-                console.log(result);
                 if (result) return 0;
             }
         } catch (error) {

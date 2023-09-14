@@ -72,8 +72,11 @@ function LoginForm({ setIsInLogIn, navigate }) {
         try {
             const result = await login(username_email, password);
             console.log(result);
-            if (result === 0) {
+            if (result.id === 0) {
                 navigate("/dashboard");
+            } else if (result.id === 4) {
+                document.querySelector(".login-error").innerHTML = result.msg;
+                console.log(result);
             }
         } catch (error) {
             console.log(error);
@@ -95,6 +98,7 @@ function LoginForm({ setIsInLogIn, navigate }) {
                 <div className="input-container" onClick={() => handleInputClick(passwordRef)}>
                     <input type="password" placeholder="Password" value={password} onChange={handleInputChange} name="password" ref={passwordRef} />
                 </div>
+                <div className="error login-error"></div>
             </div>
             <div
                 style={{display: "flex", flexDirection: "column"}}
@@ -109,7 +113,7 @@ function LoginForm({ setIsInLogIn, navigate }) {
 
 function RegisterForm({ setIsInLogIn, navigate }) {
 
-    const [isAbleToLogin, setIsAbleToLogin] = useState(false);
+    const [isAbleToRegister, setIsAbleToRegister] = useState(false);
 
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
@@ -117,7 +121,7 @@ function RegisterForm({ setIsInLogIn, navigate }) {
     const [confirmPassword, setConfirmPassword] = useState('');
 
     useEffect(() => {
-        setIsAbleToLogin(checkAllowingToLogin());
+        setIsAbleToRegister(checkAllowingToRegister());
     }, [username, password, password, confirmPassword]);
 
     function handleInputChange(e) {
@@ -148,7 +152,7 @@ function RegisterForm({ setIsInLogIn, navigate }) {
         ref.current.focus();
     }
 
-    function checkAllowingToLogin() {
+    function checkAllowingToRegister() {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         return (emailRegex.test(email) 
@@ -160,11 +164,22 @@ function RegisterForm({ setIsInLogIn, navigate }) {
     async function handleRegisterRequest() {
         try {
             const result = await register(email, username, password);
-            console.log("Result: " + result);
-            if (result === 0) {
-                navigate("/dashboard");
-            } else {
-                console.log(result);
+            switch (result.id) {
+                case 3:
+                    document.querySelector(".email-error").innerHTML = result.msg;
+                    break;
+                case 2:
+                    document.querySelector(".username-error").innerHTML = result.msg;
+                    break;
+                case 1:
+                    document.querySelector(".email-error").innerHTML = "email has been registered!";
+                    document.querySelector(".username-error").innerHTML = "username has been registered!";
+                    break;
+                case 0:
+                    navigate("/dashboard");
+                    break;
+                default:
+                    break;
             }
         } catch (error) {
             console.log(error);
@@ -181,11 +196,13 @@ function RegisterForm({ setIsInLogIn, navigate }) {
                 style={{width: "85%"}}
             >
                 <div className="input-container" onClick={() => handleInputClick(emailRef)}>
-                    <input type="text" placeholder="Email" value={email} onChange={handleInputChange} name="email" ref={emailRef} />                
+                    <input type="text" placeholder="Email" value={email} onChange={handleInputChange} name="email" ref={emailRef} />
                 </div>
+                <div className="email-error error"></div>
                 <div className="input-container" onClick={() => handleInputClick(usernameRef)}>
                     <input type="text" placeholder="Username" value={username} onChange={handleInputChange} name="username" ref={usernameRef} />                
                 </div>
+                <div className="username-error error"></div>
                 <div className="input-container" onClick={() => handleInputClick(passwordRef)}>
                     <input type="password" placeholder="Password" value={password} onChange={handleInputChange} name="password" ref={passwordRef} />
                 </div>
@@ -196,7 +213,7 @@ function RegisterForm({ setIsInLogIn, navigate }) {
             <div
                 style={{display: "flex", flexDirection: "column", alignItems: "center"}}
             >
-                <button id="register-button" className={`${checkAllowingToLogin() ? 'allowed' : 'not-allowed'}`} onClick={handleRegisterRequest}>Register</button>
+                <button id="register-button" className={`${isAbleToRegister ? 'allowed' : 'not-allowed'}`} onClick={handleRegisterRequest}>Register</button>
                 <div className="to-login" onClick={() => setIsInLogIn(true)}>Return to Login<img src={arrow} alt="" id="arrow" /></div>
             </div>
         </div>

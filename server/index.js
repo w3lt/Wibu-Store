@@ -8,6 +8,7 @@ const MySQLStore = require('express-mysql-session')(session);
 
 const passport = require('passport');
 const { sqlPool, setUp } = require('./support');
+const { Response } = require('./response');
 const LocalStrategy = require('passport-local').Strategy;
 
 const User = require('./structure/User/User').User;
@@ -90,11 +91,13 @@ app.route('/auth')
                 const result = await User.authenticate(accountID, password);
                 if (result) {
                     req.session.token = req.session.id;
+                    res.send(new Response(0, 0).toJSON());
                 } else {
-
+                    res.send(new Response(0, 4).toJSON());
                 }
             } catch (error) {
-                throw error;
+                console.log(error);
+                res.send(new Response(1).toJSON());
             }
         }) (req, res, next);
     });
@@ -109,33 +112,13 @@ app.route('/register')
         const email = req.body.email;
         const username = req.body.username;
 
-        console.log(await User.registerNewUser(email, username, password));
-
-        res.send({status: 0});
-        
-        // User.Model.findOne({username: username})
-        //     .then(result => {
-        //         if (result === null) {
-        //             // Can register
-        //             bcrypt.hash(password, 10)
-        //                 .then(hashedPass => {
-        //                     const newUser = {
-        //                         email: email,
-        //                         username: username,
-        //                         password: hashedPass,
-        //                     }
-        //                     User.Model.insertMany([newUser])
-        //                         .then(docs => {
-        //                             req.session.username = username;
-        //                             res.send(getResultByStatus(0));
-        //                         })
-        //                         .catch(err => res.send(getResultByStatus(2)))
-        //                 })
-        //                 .catch(err => res.send(getResultByStatus(2)))
-        //         } else {
-        //             res.send(getResultByStatus(3));
-        //         }
-        //     })
+        try {
+            const result = await User.registerNewUser(email, username, password);
+            res.send(new Response(0, result).toJSON());
+        } catch (error) {
+            console.log(error);
+            res.send(new Response(1).toJSON());
+        }
     })
 
 // Logout

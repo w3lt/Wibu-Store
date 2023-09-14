@@ -8,10 +8,6 @@ exports.MYSQL_USER = MYSQL_USER;
 const MYSQL_PASSWORD = process.env.MYSQL_PASSWORD;
 exports.MYSQL_PASSWORD = MYSQL_PASSWORD;
 
-console.log(MYSQL_HOST);
-console.log(MYSQL_USER);
-console.log(MYSQL_PASSWORD);
-
 const db = process.env.MYSQL_DATABASE;
 exports.db = db;
 
