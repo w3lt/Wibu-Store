@@ -1,42 +1,13 @@
-// This is mongodb model of User
-const mongoose = require('mongoose');
-
-const UserSchema = new mongoose.Schema({
-    uid: {
-        type: String,
-        unique: true,
-        required: true
-    },
-    // each user is identified by UID
-    email: {
-        type: String,
-        unique: true,
-        required: true
-    },
-    // only one user have a specific email
-    username: {
-        type: String,
-        unique: true,
-        required: true
-    },
-    // only one user have a specific username
-    password: {
-        type: String,
-        required: true
-    },
-    gender: Number,
-    // gender:
-    //      -1: woman
-    //      0 : other
-    //      1 : man
-    //      None: rather not to say
-    dob: Date,
-    created_at: {
-        type: Date,
-        default: new Date(),
-        required: true
-    }
-})
-
-const UserModel = mongoose.model('User', UserSchema);
-exports.model = UserModel;
+// This is db model of User meta data
+// Table name: users
+// +------------+--------------+------+-----+---------+-------+
+// | Field      | Type         | Null | Key | Default | Extra |
+// +------------+--------------+------+-----+---------+-------+
+// | uid        | int unsigned | NO   | PRI | NULL    |       |
+// | email      | varchar(255) | YES  | UNI | NULL    |       |
+// | username   | varchar(255) | NO   |     | NULL    |       |
+// | password   | varchar(255) | NO   | UNI | NULL    |       |
+// | gender     | tinyint      | YES  |     | NULL    |       |
+// | dob        | datetime     | YES  |     | NULL    |       |
+// | created_at | datetime     | NO   |     | NULL    |       |
+// +------------+--------------+------+-----+---------+-------+

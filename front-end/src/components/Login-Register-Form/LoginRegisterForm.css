@@ -1,0 +1,122 @@
+.login-register-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 420px;
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    padding: 10px 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    /* cursor: url("../../assets/my_cursor.png"), wait; */
+}
+
+.login-form-header {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+}
+
+.form-title {
+    margin: 0;
+    margin-top: 10px;
+    font-family: 'Mynerve', cursive;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(to right, #E4C6EC, #8FCFE5);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.logo {
+    width: 30px;
+    height: 30px;
+    margin: 0 4px;
+}
+
+.main-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 420px;
+}
+
+.input-container {
+    border: 1px solid #EBEBEB;
+    border-radius: 5px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    margin: 30px 0;
+}
+
+.input-container:hover {
+    cursor: text;
+}
+
+.input-container input {
+    border: none;
+    outline: none;
+    padding: 0;
+    flex-grow: 1;
+}
+
+#login-button {
+    font-family: 'Ysabeau Office', sans-serif;
+    border: none;
+    border-radius: 5px;
+    font-size: 25px;
+    padding: 5px 0;
+    margin-bottom: 10px;
+}
+
+.not-allowed {
+    cursor: not-allowed;
+    background-color: #E4E5EA;
+    color: #C1C2C7;
+}
+
+.allowed {
+    cursor: pointer;
+    background-color: #6B7DF0;
+    color: #FFFFFF;
+}
+
+#register-now {
+    color: blue;
+}
+
+#register-now:hover {
+    cursor: pointer;
+}
+
+#register-button {
+    font-family: 'Ysabeau Office', sans-serif;
+    border: none;
+    border-radius: 5px;
+    font-size: 25px;
+    padding: 5px 100px;
+    margin-bottom: 10px;
+}
+
+#arrow {
+    width: 8.23px;
+    height: 14px;
+    margin-left: 2px;
+}
+
+.to-login {
+    color: #BDC5D2;
+    display: flex;
+    align-items: center;
+    font-size: 19px;
+    margin: 10px 0 5px;
+}
+
+.to-login:hover {
+    cursor: pointer;
+}

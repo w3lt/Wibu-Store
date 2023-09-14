@@ -1,0 +1,16 @@
+:root {
+  --primary-color: #005fff;
+  --primary-color-alpha: #005fff1a;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100ch;
+}
+
+
+#root {
+  height: 100%;
+}

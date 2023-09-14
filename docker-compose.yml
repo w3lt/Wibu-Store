@@ -1,0 +1,48 @@
+version: "3"
+
+services:
+  frontend:
+    build:
+      context: ./front-end
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./front-end:/app
+    depends_on:
+      - server
+
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "12345:12345"
+    volumes:
+      - ./server:/server
+    networks:
+      - my-network
+    environment:
+      - MYSQL_HOST=mysql
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=my-secret-password
+      - MYSQL_ROOT_PASSWORD=my-secret-password
+      - MYSQL_DATABASE=WibuStore
+    depends_on:
+      - mysql
+
+  mysql:
+    build:
+        context: ./mysql-server
+        dockerfile: Dockerfile
+    networks:
+      - my-network
+    environment:
+      - MYSQL_ROOT_PASSWORD=my-secret-password
+      - MYSQL_DATABASE=WibuStore
+
+
+networks:
+  my-network:
+    driver: bridge
