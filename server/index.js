@@ -66,12 +66,18 @@ app.use((req, res, next) => {
 });
 
 app.route('/check-session')
-    .get((req, res) => {
-        if (req.session.token === undefined) {
-            res.send({status: 0, result: false})
-        } else {
-            res.send({status: 0, result: true})
+    .get(async (req, res) => {
+        try {
+            const result = User.checkSession(req.session.id);
+            if (result) {
+                res.send(new Response(0, 0).toJSON());
+            } else {
+                res.send(new Response(0, 5).toJSON());
+            }
+        } catch (error) {
+            res.send(new Response(1).toJSON());
         }
+        
     })
 
 // Auth
@@ -89,8 +95,8 @@ app.route('/auth')
 
             try {
                 const result = await User.authenticate(accountID, password);
-                if (result) {
-                    req.session.token = req.session.id;
+                if (result !== false) {
+                    req.session.uid = result.uid;
                     res.send(new Response(0, 0).toJSON());
                 } else {
                     res.send(new Response(0, 4).toJSON());
@@ -128,22 +134,20 @@ app.route('/logout')
         req.logout(err => {
             if (err) {
                 console.log(err);
-                res.status(500).json({ error: 'An error occurred during logout.' });
+                res.status(500).json(new Response(1).toJSON());
             } else {
                 // This function is provided by Passport.js to clear the session
-                req.session.destroy((err) => {
+                req.session.destroy(err => {
                     if (err) {
                         console.log(err);
-                        res.status(500).json({ error: 'An error occurred during logout.' });
+                        res.status(500).json(new Response(1).toJSON());
                     } else {
-                        res.send({status: 0});
+                        res.send(new Response(0, 0).toJSON());
                     }
                 });
             }
-        }); 
-        
+        });
     });
-
 
 
 const PORT = config.PORT;

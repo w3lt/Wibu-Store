@@ -188,10 +188,10 @@ class User {
         }
     }
 
-    // method authenticate is used to authenticate a login request
+    // method @authenticate is used to authenticate a login request
     // @params: accountID (username or email), password
     // @return: Int
-    //      -> true if successfully authenticate
+    //      -> user infor if successfully authenticate
     //      -> false if not
     static async authenticate(accountID, password) {
         let accountIDField;
@@ -202,14 +202,15 @@ class User {
         const query = `SELECT uid FROM users WHERE ${accountIDField}='${accountID}' AND password='${password}'`;
         try {
             const result = await execQuery(query);
-            if (result.length === 1) return true;
+            console.log(result);
+            if (result.length === 1) return result[0];
             else return false;
         } catch (error) {
             throw error;
         }
     }
 
-    // method registerNewUser is used to registered new user
+    // method @registerNewUser is used to registered new user
     // @params: email, username, password
     // @return: Int
     //      -> 0 if successfully registered new user
@@ -236,6 +237,22 @@ class User {
             throw error;
         }
     }
-}
 
+    // method @checkSession is used to check if session exists
+    // @params: sessionID
+    // return: Boolean
+    //      -> true if session exists
+    //      -> false if not
+    static async checkSession(sessionID) {
+        const query = `SELECT * FROM sessions WHERE session_id='${sessionID}'`;
+        try {
+            const result = execQuery(query);
+            if (result.length !== 0) return true;
+            else return false;
+        } catch (error) {
+            console.log(error);
+            throw error;
+        }
+    }
+}
 exports.User = User;

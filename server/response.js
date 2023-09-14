@@ -41,10 +41,15 @@ exports.Response = Response;
 
 const responses = [
     {id: 0, msg: "successfully"},
+    // +++ ------------------------------------- +++ //
     // response for register request
     {id: 1, msg: "email and username have been registered!"},
     {id: 2, msg: "username has been registered!"},
     {id: 3, msg: "email has been registered!"},
+    // +++ ------------------------------------- +++ //
     // response for login request
-    {id: 4, msg: "email or password incorrect!"}
+    {id: 4, msg: "email or password incorrect!"},
+    // +++ ------------------------------------- +++ //
+    // response for check session
+    {id: 5, msg: "user unauthorized!"}
 ]
