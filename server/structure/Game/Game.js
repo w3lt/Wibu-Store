@@ -1,4 +1,4 @@
-const { execQuery, execGetQuery, execSetQuery } = require("../../support");
+const { execQuery, execGetQuery, execSetQuery, strToJSON } = require("../../support");
 
 class Game {
     // +++ ------ Meta data ------ +++ //
@@ -9,7 +9,14 @@ class Game {
 
     // constructor
     constructor(gameID) {
-        this.#gameID = gameID;
+        try {
+            const result = execGetQuery(this.#tableName, 'id', this.#condition);
+            if (result.length !== 0) this.#gameID = gameID;
+            else throw new Error("game ID does not exist");
+        } catch (error) {
+            console.log(error);
+            throw error;
+        }
     }
 
     // create talbe Games
@@ -22,6 +29,7 @@ class Game {
             publisher INT,
             description TEXT,
             release_date DATETIME,
+            size DECIMAL(5, 2),
             PRIMARY KEY (id),
             FOREIGN KEY (publisher) REFERENCES companies(id)
         )`;
@@ -229,7 +237,7 @@ class Game {
         const query = `SELECT * FROM ${this.#tableName} WHERE ${this.#condition}`;
         try {
             const result = await execQuery(query);
-            return result;
+            return result[0];
         } catch (error) {
             throw error;
         }
@@ -246,7 +254,7 @@ class Game {
         const query = `SELECT * FROM ${this.#storeRelatedIn4TableName} WHERE ${this.#condition}`;
         try {
             const result = await execQuery(query);
-            return result;
+            return result[0];
         } catch (error) {
             throw error;
         }
@@ -373,6 +381,19 @@ class Game {
         } catch (error) {
             throw error;
         }
+    }
+
+    // -------------------------- //
+    async getFullData() {
+        const metaData = await this.getFullMetaData();
+        const storeRelatedData = await this.getStoreRelatedInformation();
+        const fullData = {...metaData, ...storeRelatedData};
+
+        fullData.genres = strToJSON(fullData.genres);
+        fullData.developers = strToJSON(fullData.developers);
+        fullData.reviews = strToJSON(fullData.reviews);
+
+        return fullData;
     }
 }
 

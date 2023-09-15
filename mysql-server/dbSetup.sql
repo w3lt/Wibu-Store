@@ -36,6 +36,7 @@ CREATE TABLE games (
     publisher INT,
     description TEXT,
     release_date DATETIME,
+    size DECIMAL(5, 2) NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (publisher) REFERENCES companies(id)
 );
@@ -43,7 +44,7 @@ CREATE TABLE games (
 -- create store-related table
 CREATE TABLE gameStoreRelatedIn4 (
     id INT NOT NULL,
-    reviews JSON,
+    reviews JSON, -- {point: float, review: text}
     original_price DECIMAL(6, 2) NOT NULL,
     price DECIMAL(6, 2) NOT NULL,
     PRIMARY KEY (id),

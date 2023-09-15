@@ -11,6 +11,10 @@ exports.MYSQL_PASSWORD = MYSQL_PASSWORD;
 const db = process.env.MYSQL_DATABASE;
 exports.db = db;
 
+// const salt = "Be Giang ngok ngech dang iu";
+const salt = "$2b$12$0tnZV/lCVvxWYv6KTYrVJe";
+exports.salt = salt;
+
 // port
 const PORT = 12345;
 exports.PORT = PORT;

@@ -1,4 +1,39 @@
-import { server_main_route } from "./configs"
+import { server_main_route } from "./configs";
+
+// function @execRequest is used to execute request
+// @params: route, method, body
+// return: response
+async function execRequest() {
+    const route = arguments[0];
+    const method = arguments[1];
+
+    let headers;
+    let body = arguments[2]
+
+    if (method === "GET") {
+        headers = undefined;
+    } else if (method === "POST") {
+        headers = {'Content-Type': 'application/json'};
+    }
+    try {
+        const response = await fetch(`${server_main_route}${route}`, {
+            method: method,
+            credentials: "include",
+            headers: headers,
+            body: body
+        });
+
+        const responseData = await response.json();
+        if (responseData.status === 0) {
+            delete responseData.status;
+            return responseData;
+        } else {
+            throw new Error(responseData.error);
+        }
+    } catch (error) {
+        throw error;
+    }
+}
 
 async function checkSession() {
     try {
@@ -87,220 +122,11 @@ async function logout() {
     }
 }
 
-async function fetchContact() {
-    try {
-        const response = await fetch(`${server_main_route}/my-contacts`, {
-            method: "GET",
-            credentials: "include",
-        });
-
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        throw new Error(error);
-    }
+async function fetchGameInfor(gameID) {
+    const route = `/game/${gameID}`;
+    const method = "GET";
+    const result = await execRequest(route, method);
+    if (result.id === 0) return result.data;
 }
 
-async function sendMessage(sender, receiver, content) {
-    try {
-        const response = await fetch(`${server_main_route}/message`, {
-            method: "POST",
-            credentials: "include",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({sender: sender, receiver: receiver, content: content})
-        });
-
-        const data = await response.json();
-        if (data.status === 0) {
-            return 0;
-        } else {
-            return data;
-        }
-    } catch (error) {
-        throw new Error(error);
-    }
-}
-
-// index indicate which type of notification need to be fetch
-// 0 -> friend request
-async function fetchNotification(index) {
-    let type;
-    switch (index) {
-        case 0:
-            type = "friend-requests";
-            break;
-    }
-
-    try {
-        const response = await fetch(`${server_main_route}/notifications/${type}`, {
-            method: "GET",
-            credentials: "include",
-        });
-
-        const data = await response.json();
-        if (data.status === 0) {
-            return data.data;
-        } else {
-            throw new Error(data.error);
-        }
-    } catch (error) {
-        throw new Error(error);
-    }
-}
-
-async function readNotifications(index) {
-    let type;
-    switch (index) {
-        case 0:
-            type = "friend-requests";
-            break;
-    }
-    try {
-        const response = await fetch(`${server_main_route}/notifications/${type}`, {
-            method: "POST",
-            credentials: "include",
-        });
-
-        const data = await response.json();
-        if (data.status === 0) {
-            return 0;
-        } else {
-            throw new Error(data.error);
-        }
-    } catch (error) {
-        throw new Error(error);
-    }
-}
-
-async function fetchNumberUnreadNotification() {
-    try {
-        const response = await fetch(`${server_main_route}/notifications`, {
-            method: "GET",
-            credentials: "include",
-        });
-
-        const data = await response.json();
-        if (data.status === 0) {
-            return data.numberUnreadNotification;
-        } else {
-            throw new Error(data.error);
-        }
-    } catch (error) {
-        throw new Error(error);
-    }
-}
-
-async function searchPeople(searchingName) {
-    try {
-        const response = await fetch(`${server_main_route}/people/${searchingName}`, {
-            method: "GET",
-            credentials: "include",
-        });
-
-        const data = await response.json();
-        if (data.status === 0) {
-            return data.data;
-        } else {
-            throw new Error(data.error);
-        }
-    } catch (error) {
-        throw new Error(error);
-    }
-}
-
-async function requestFriendRelationship(username) {
-    try {
-        const response = await fetch(`${server_main_route}/friends`, {
-            method: "POST",
-            credentials: "include",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({receiver: username})
-        });
-
-        const data = await response.json();
-        if (data.status === 0) {
-            return 0;
-        } else {
-            throw new Error(data.error);
-        }
-    } catch (error) {
-        throw new Error(error);
-    }
-}
-
-async function handleFriendRequest(sender, type) {
-    try {
-        const response = await fetch(`${server_main_route}/friend-request`, {
-            method: "POST",
-            credentials: "include",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({sender: sender, type: type})
-        });
-
-        const data = await response.json();
-        if (data.status === 0) {
-            return 0;
-        } else {
-            throw new Error(data.error);
-        }
-    } catch (error) {
-        throw new Error(error);
-    }
-}
-
-async function cancelFriendRequest(username) {
-    try {
-        const response = await fetch(`${server_main_route}/friends`, {
-            method: "POST",
-            credentials: "include",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({receiver: username})
-        });
-
-        const data = await response.json();
-        if (data.status === 0) {
-            return 0;
-        } else {
-            throw new Error(data.error);
-        }
-    } catch (error) {
-        throw new Error(error);
-    }
-}
-
-async function createGroup(groupName, visibility) {
-    try {
-        const response = await fetch(`${server_main_route}/group`, {
-            method: "POST",
-            credentials: "include",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({groupName: groupName, visibility: visibility})
-        });
-
-        const data = await response.json();
-        if (data.status === 0) {
-            console.log(data.result);
-            return 0;
-        } else {
-            throw new Error(data.error);
-        }
-    } catch (error) {
-        throw new Error(error);
-    }
-}
-
-export {checkSession, login, register, logout, fetchContact, sendMessage,
-    fetchNotification, searchPeople, requestFriendRelationship, handleFriendRequest,
-    fetchNumberUnreadNotification, readNotifications, cancelFriendRequest,
-    createGroup
-};
+export {checkSession, login, register, logout, fetchGameInfor};

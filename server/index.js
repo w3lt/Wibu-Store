@@ -9,6 +9,7 @@ const MySQLStore = require('express-mysql-session')(session);
 const passport = require('passport');
 const { sqlPool, setUp } = require('./support');
 const { Response } = require('./response');
+const { Game } = require('./structure/Game/Game');
 const LocalStrategy = require('passport-local').Strategy;
 
 const User = require('./structure/User/User').User;
@@ -149,6 +150,18 @@ app.route('/logout')
         });
     });
 
+app.route('/game/:gameID')
+    .get(async (req, res) => {
+        const gameID = req.params.gameID;
+        
+        try {
+            const game = new Game(gameID);
+            const gameData = await game.getFullData();
+            res.send(new Response(0, 0, gameData).toJSON());
+        } catch (error) {
+            res.send(new Response(1).toJSON());
+        }
+    })
 
 const PORT = config.PORT;
 app.listen(PORT, async () => {

@@ -63,3 +63,8 @@ function dateToDatetime(date) {
     return date.toISOString().slice(0, 19).replace('T', ' ');
 }
 exports.dateToDatetime = dateToDatetime;
+
+function strToJSON(str) {
+    return JSON.parse(str.replace(/'/g, '"'));
+}
+exports.strToJSON = strToJSON;

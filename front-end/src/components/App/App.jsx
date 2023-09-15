@@ -10,6 +10,7 @@ import {
 import './App.css';
 import LoginRegisterForm from '../Login-Register-Form/LoginRegisterForm';
 import Dashboard from '../Dashboard/Dashboard';
+import Game from '../Game/Game';
 
 
 const router = createBrowserRouter([
@@ -20,6 +21,10 @@ const router = createBrowserRouter([
   {
     path: "/dashboard",
     element: <Dashboard />
+  },
+  {
+    path: "/game/:gameID",
+    element: <Game />
   }
 ])
 

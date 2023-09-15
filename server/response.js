@@ -1,6 +1,7 @@
 class Response {
     #msg;
     #error;
+    #data;
 
     // @params: status, id, error
     constructor () {
@@ -9,9 +10,11 @@ class Response {
 
         if (status === 0) { // status = 0 => no error
             const id = arguments[1];
+            const data = arguments[2]
 
             this.#error = undefined;
-            this.id = id; 
+            this.id = id;
+            this.#data = data;
             this.#msg = responses[id].msg;
         } else if (status === 1) { // status = 1 => error
             this.#msg = undefined;
@@ -28,12 +31,17 @@ class Response {
         return this.#error;
     }
 
+    getData() {
+        return this.#data;
+    }
+
     toJSON() {
         return {
             status: this.status,
             id: this.id,
             msg: this.#msg,
-            error: this.#error
+            error: this.#error,
+            data: this.#data
         }
     }
 }

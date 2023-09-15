@@ -29,7 +29,7 @@ function LoginRegisterForm() {
     return (
         <div className="login-register-container">
             <div className="login-form-header">
-                <h1 className="form-title">Wibu <img src={logo} alt="" className="logo" /> Bar</h1>
+                <h1 className="form-title">Wibu <img src={logo} alt="" className="logo" /> Store</h1>
             </div>
             {isInLogIn ?
                 <LoginForm setIsInLogIn={setIsInLogIn} navigate={navigate} /> :

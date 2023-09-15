@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs');
 const { execQuery, execGetQuery, execSetQuery, generateNewUID, dateToDatetime } = require('../../support');
+const { salt } = require('../../configs');
 
 // Class of user
 class User {
@@ -195,11 +196,12 @@ class User {
     //      -> false if not
     static async authenticate(accountID, password) {
         let accountIDField;
+        const hashedPassword = bcrypt.hashSync(password, salt);
         
         if (accountID.includes('@')) accountIDField = 'email';
         else accountIDField = 'username';
 
-        const query = `SELECT uid FROM users WHERE ${accountIDField}='${accountID}' AND password='${password}'`;
+        const query = `SELECT uid FROM users WHERE ${accountIDField}='${accountID}' AND password='${hashedPassword}'`;
         try {
             const result = await execQuery(query);
             console.log(result);
@@ -228,8 +230,9 @@ class User {
             else if (emailVerificationResult.length !== 0) return 3;
             else {
                 const newUID = await generateNewUID();
+                const hashedPassword = bcrypt.hashSync(password, salt);
                 const registeringQuery = `INSERT INTO users (uid, email, username, password, created_at) 
-                    VALUES (${newUID}, '${email}', '${username}', '${password}', '${dateToDatetime(new Date())}')`;
+                    VALUES (${newUID}, '${email}', '${username}', '${hashedPassword}', '${dateToDatetime(new Date())}')`;
                 const result = await execQuery(registeringQuery);
                 if (result) return 0;
             }
