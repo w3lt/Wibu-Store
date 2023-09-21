@@ -1,5 +1,6 @@
-var mysql = require('mysql');
-var configs = require('./configs');
+const mysql = require('mysql');
+const configs = require('./configs');
+const fs = require('fs');
 
 var pool = mysql.createPool({
     connectionLimit: 10,
@@ -68,3 +69,30 @@ function strToJSON(str) {
     return JSON.parse(str.replace(/'/g, '"'));
 }
 exports.strToJSON = strToJSON;
+
+// function to encode file data to base64 encoded string
+function base64Encode(file) {
+    try {
+        // read binary data
+        var bitmap = fs.readFileSync(file);
+
+        // convert binary data to base64 encoded string
+        return new Buffer.from(bitmap).toString('base64');
+    } catch (error) {
+        if (error.code === 'ENOENT') {
+            return null;
+        } else {
+            throw error;
+        }
+    }
+}
+
+function fetchRealIMGPath(tmpPath) {
+    const ImgPath = `${__dirname}/assets/${tmpPath}`;
+    return ImgPath;
+}
+
+function convertPath2IMG(path) {
+    return base64Encode(fetchRealIMGPath(path));
+}
+exports.convertPath2IMG = convertPath2IMG;

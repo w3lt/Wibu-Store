@@ -2,6 +2,7 @@ const express = require('express');
 const config = require('./configs');
 const session = require('express-session');
 const bodyParser = require('body-parser');
+const axios = require('axios');
 const fs = require('fs').promises;
 const path = require('path');
 const MySQLStore = require('express-mysql-session')(session);
@@ -69,9 +70,9 @@ app.use((req, res, next) => {
 app.route('/check-session')
     .get(async (req, res) => {
         try {
-            const result = User.checkSession(req.session.id);
+            const result = await User.checkSession(req.session.id);
             if (result) {
-                res.send(new Response(0, 0).toJSON());
+                res.send(new Response(0, 0, {uid: req.session.uid}).toJSON());
             } else {
                 res.send(new Response(0, 5).toJSON());
             }
@@ -150,7 +151,20 @@ app.route('/logout')
         });
     });
 
-app.route('/game/:gameID')
+app.route('/games/free-to-play')
+    .get(async (req, res) => {
+        const url = `http://${config.DATA_ANALYSIS_SERVER}:${config.DATA_ANALYSIS_SERVER_PORT}/games/free-to-play`;
+        try {
+            console.log(url);
+            const response = await axios.get(url);
+            console.log(response.data);
+        } catch (error) {
+            console.log(error);
+            res.send(new Response(1).toJSON());
+        }
+    })
+
+app.route('/games/:gameID')
     .get(async (req, res) => {
         const gameID = req.params.gameID;
         
@@ -161,6 +175,24 @@ app.route('/game/:gameID')
         } catch (error) {
             res.send(new Response(1).toJSON());
         }
+    });
+
+app.route('/users/:userID/:field')
+    .get(async (req, res) => {
+        console.log(req.params.userID);
+        try {
+            const result = await User.checkSession(req.params.userID);
+            if (result) {
+                const getField = req.params.field;
+                const data = await new User(req.params.userID).get(getField);
+                res.send(new Response(0, 0, data));
+            } else {
+                res.send(new Response(0, 5).toJSON());
+            }
+        } catch (error) {
+            res.send(new Response(1).toJSON());
+        }
+        
     })
 
 const PORT = config.PORT;

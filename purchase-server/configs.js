@@ -1,0 +1,5 @@
+const STRIPE_SECRET_KEY = "sk_test_51NsNMwJqOqW5UsDeG7q0qN1nEyj6BhcTYcyaNzXXQhtBM86S0CJ2zCs9lzuY6gEHKfmlLAmkx3VSn4fJk3Tsz29L00nOQTJunp";
+exports.STRIPE_SECRET_KEY = STRIPE_SECRET_KEY;
+
+const PORT = 80;
+exports.PORT = PORT;

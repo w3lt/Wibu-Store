@@ -1,0 +1,47 @@
+.reviews {
+    display: flex;
+    flex-direction: column;
+}
+
+.total-point {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.avg-point {
+    font-size: 6rem;
+}
+
+.reviews-resume {
+    display: flex;
+    flex-direction: row;
+    margin: 0 auto;
+}
+
+.points-count {
+    font-family: 'Cousine', monospace;
+    font-size: 1.7rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-left: 5rem;
+}
+
+.point-count {
+    display: flex;
+    align-items: center;
+}
+
+.reviews-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.review {
+    background-color: #434242;
+    margin: 0 auto;
+    width: 70%;
+    padding: 10px 20px;
+    border-radius: 20px;
+}

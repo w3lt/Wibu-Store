@@ -3,10 +3,11 @@ const { execQuery, execGetQuery, execSetQuery } = require("../../support");
 class Genre {
     #id;
     #tableName = 'genres';
-    #condition = `id='${this.#id}'`;
+    #condition;
 
     constructor(genreID) {
         this.#id = genreID;
+        this.#condition = `id='${this.#id}'`;
     }
 
     static async createGenresTable() {
@@ -28,7 +29,8 @@ class Genre {
         const getField = 'title';
         try {
             const result = await execGetQuery(this.#tableName, getField, this.#condition);
-            return result;
+            if (result.length !== 0) return result[0].title;
+            else return null;
         } catch (error) {
             throw error;
         }

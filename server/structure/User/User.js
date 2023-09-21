@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs');
-const { execQuery, execGetQuery, execSetQuery, generateNewUID, dateToDatetime } = require('../../support');
+const { execQuery, execGetQuery, execSetQuery, generateNewUID, dateToDatetime, convertPath2IMG } = require('../../support');
 const { salt } = require('../../configs');
 
 // Class of user
@@ -7,11 +7,29 @@ class User {
     // private fields
     #uid;
     #tableName = 'users';
-    #condition = `uid='${this.#uid}'`;
+    #condition;
 
     // constructor
     constructor(uid) {
         this.#uid = uid;
+        this.#condition = `uid='${this.#uid}'`;
+    }
+
+    async get(getField) {
+        try {
+            let result;
+            if (getField === "avatar") {
+                result = await this.getAvatar();
+                return result;
+            } else {
+                result = await execGetQuery(this.#tableName, getField, this.#condition);
+                if (result.length !== 0) return result[0][getField];
+                else return null;
+            }
+            
+        } catch (error) {
+            throw error;
+        }
     }
 
     // UID
@@ -20,6 +38,19 @@ class User {
         try {
             const result = await execGetQuery(this.#tableName, getField, this.#condition);
             return result;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getAvatar() {
+        const getField = "avatar_path";
+        try {
+            const result = await execGetQuery(this.#tableName, getField, this.#condition);
+            if (result.length !== 0) {
+                const avatar = convertPath2IMG(`avatars/${result[0].avatar_path === null ? 'default_avatar.png' : result[0].avatar_path}`);
+                return avatar;
+            }
         } catch (error) {
             throw error;
         }
@@ -51,7 +82,8 @@ class User {
         const getField = 'username';
         try {
             const result = await execGetQuery(this.#tableName, getField, this.#condition);
-            return result;
+            if (result.length !== 0) return result[0].username;
+            else return null;
         } catch (error) {
             throw error;
         }
@@ -249,7 +281,8 @@ class User {
     static async checkSession(sessionID) {
         const query = `SELECT * FROM sessions WHERE session_id='${sessionID}'`;
         try {
-            const result = execQuery(query);
+            const result = await execQuery(query);
+            console.log(result);
             if (result.length !== 0) return true;
             else return false;
         } catch (error) {

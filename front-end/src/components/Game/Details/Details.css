@@ -1,0 +1,51 @@
+.about-this-game {
+    margin-bottom: 30px;
+}
+
+.title {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.system-requirements-tags {
+    display: flex;
+    flex-direction: row;
+}
+
+.system-requirements-tag {
+    font-size: 1.1rem;
+    font-weight: 600;
+    display: flex;
+    width: 6rem;
+    padding: 10px 0;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    margin-right: 5px;
+}
+
+.system-requirements-tag:hover {
+    cursor: pointer;
+    color: #302F2F;
+    background-color: white;
+}
+
+.system-requirements-current-tag {
+    cursor: pointer;
+    color: #302F2F;
+    background-color: white;
+}
+
+.system-requirement-details {
+    display: flex;
+    flex-direction: row;
+    /* background-color: white;
+    color: #302F2F; */
+}
+
+.system-requirement-details > div {
+    width: 25rem;
+    margin-right: 10px;
+    margin-top: 10px;
+}

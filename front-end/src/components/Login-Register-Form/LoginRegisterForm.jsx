@@ -13,12 +13,11 @@ function LoginRegisterForm() {
     const navigate = useNavigate();
 
 
-
     useEffect(() => {
         (async () => {
-            const isLoggedIn = await checkSession();
-            if (isLoggedIn) {
-                navigate("/dashboard");
+            const session = await checkSession();
+            if (session.result) {
+                navigate(-1);
             }
         }) ();
         
@@ -73,7 +72,7 @@ function LoginForm({ setIsInLogIn, navigate }) {
             const result = await login(username_email, password);
             console.log(result);
             if (result.id === 0) {
-                navigate("/dashboard");
+                navigate(-1);
             } else if (result.id === 4) {
                 document.querySelector(".login-error").innerHTML = result.msg;
                 console.log(result);
@@ -176,7 +175,7 @@ function RegisterForm({ setIsInLogIn, navigate }) {
                     document.querySelector(".username-error").innerHTML = "username has been registered!";
                     break;
                 case 0:
-                    navigate("/dashboard");
+                    navigate(-1);
                     break;
                 default:
                     break;

@@ -2,11 +2,12 @@ const { execQuery, execGetQuery, execSetQuery } = require("../../support");
 
 class Company {
     #id;
-    #tableName = 'games';
-    #condition = `id='${this.#id}'`;
+    #tableName = 'companies';
+    #condition;
 
     constructor(companyID) {
         this.#id = companyID;
+        this.#condition = `id='${this.#id}'`
     }
 
     static async createCompaniesTable() {
@@ -34,7 +35,8 @@ class Company {
         const getField = 'name';
         try {
             const result = await execGetQuery(this.#tableName, getField, this.#condition);
-            return result;
+            if (result.length !== 0) return result[0].name;
+            else return null;
         } catch (error) {
             throw error;
         }
@@ -44,7 +46,7 @@ class Company {
         const setStatement = `name='${newName}'`;
         try {
             const result = await execSetQuery(this.#tableName, setStatement, this.#condition);
-            return result;
+            return result
         } catch (error) {
             throw error;
         }

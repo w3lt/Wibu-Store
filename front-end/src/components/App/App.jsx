@@ -15,7 +15,7 @@ import Game from '../Game/Game';
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: "/login",
     element: <LoginRegisterForm />
   },
   {

@@ -2,14 +2,15 @@
     display: flex;
 } */
 
+/* Header container */
 .header-container {
     display: flex;
     position: fixed;
     width: 100%;
-    /* background-color: #DEDBC5; */
+    background-color: #395B64;
     padding: 5px 0;
-    color: #FBCD81;
     align-items: center;
+    z-index: 999;
 }
 
 .store-logo {
@@ -54,7 +55,7 @@
 	/* border: 1px solid #FBCD81; */
 	display: inline-block;
 	cursor: pointer;
-	color: #FBCD81;
+	color: white;
 	/* font-family: 'Anonymous Pro', monospace; */
 	font-size: 1rem;
 	padding: 6px 12px;
@@ -64,13 +65,13 @@
 .header-category:hover {
     transform-origin: center;
     transform: scale(1.05);
-    background-color: #FBCD81;
-    color: #ffffff;
+    background-color: white;
+    color: #395B64;
 }
 
 .search-bar {
     display: flex;
-    border: solid 1px #FBCD81;
+    border: solid 1px #9DB2BF;
     border-radius: 10px;
     overflow: hidden;
     background-color: white;
@@ -87,12 +88,12 @@
     border: none;
     overflow: hidden;
     margin: 0 5px;
-    color: #FBCD81;
+    color: #9DB2BF;
     font-size: 1rem;
 }
 
 .search-bar input::placeholder {
-    color: #FBCD81;
+    color: #9DB2BF;
 }
 
 .cart img {
@@ -103,25 +104,212 @@
 
 .cart:hover {
     cursor: pointer;
+
 }
 
 .login-button {
     background-color: transparent;
 	border-radius: 5px;
-	border: 1px solid #FBCD81;
+	/* border: 1px solid white; */
 	display: inline-block;
 	cursor: pointer;
-	color: #FBCD81;
+	color: white;
 	font-family: 'Anonymous Pro', monospace;
 	font-size: 1rem;
 	padding: 6px 12px;
     text-align: center;
     margin-right: 10px;
+    font-weight: 500;
 }
 
 .login-button:hover {
     transform-origin: center;
     transform: scale(1.05);
-    background-color: #FBCD81;
-    color: #ffffff;
+    background-color: white;
+    color: #9DB2BF;
+}
+
+.avatar-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+}
+
+.avatar {
+    width: 37px;
+    height: 37px;
+}
+
+.avatar-container:hover {
+    cursor: pointer;
+}
+
+/* Main content container */
+.main-content-container {
+    position: absolute;
+    width: 100%;
+    top: 52px;
+    padding: 50px 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #2C3333;
+    color: white;
+}
+
+.data-container {
+    width: 70%;
+}
+
+.main-infor {
+    display: flex;
+}
+
+.game-infor {
+    display: flex;
+    flex-direction: column;
+}
+
+.game-title {
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+.publisher {
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.developers {
+    font-size: 1rem;
+}
+
+.cover-img {
+    margin-right: 10px;
+    height: 240px;
+}
+
+.cover-img img {
+    width: 180px;
+    height: 240px;
+}
+
+.background-img {
+    z-index: 1;
+}
+
+.point-stars {
+    display: flex;
+    margin-bottom: 10px;
+    align-items: center;
+}
+
+.point-stars img {
+    width: 30px;
+    height: 30px;
+    margin-left: 10px;
+}
+
+
+.actions {
+    display: flex;
+    width: 70%;
+    margin-top: 10px;
+    align-items: center;
+}
+
+.buy-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: white;
+    color: #2C3333;
+    padding: 5px 0;
+    border-radius: 10px;
+    width: 180px;
+}
+
+.buy-btn:hover {
+    cursor: pointer;
+}
+
+.other-btns div {
+    aspect-ratio: 1 / 1;
+    background-color: white;
+    width: 48px;
+    height: 48px;
+    margin-left: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+}
+
+.other-btns div:hover {
+    cursor: pointer;
+}
+
+.other-btns div img {
+    width: 30px;
+    height: 30px;
+}
+
+.details-reviews-container {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    left: 0;
+    top: 450px;
+    width: 100%;
+    align-items: center;
+    padding: 50px 0;
+    background-color: #302F2F;
+    color: white;
+}
+
+.tags-container {
+    display: flex;
+    margin: 0 auto;
+    margin-bottom: 30px;
+}
+
+.tag {
+    font-size: 1.5rem;
+    font-weight: 600;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.tag:hover {
+    cursor: pointer;
+}
+
+.details-tag {
+    margin-right: 30px;   
+}
+
+.reviews-tag {
+    margin-right: 30px;
+}
+
+.tag-switch-tab {
+    display: block;
+    width: 0; /* Initially set to 0 width */
+    height: 2px; /* Adjust the height as needed */
+    border-radius: 1px;
+    background-color: white;
+    transition: width 0.3s ease;
+    margin-top: 5px;
+}
+
+.tag:hover .tag-switch-tab {
+    width: 30px;
+}
+
+.current-tag {
+    width: 30px; 
 }

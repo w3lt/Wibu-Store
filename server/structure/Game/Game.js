@@ -1,44 +1,19 @@
-const { execQuery, execGetQuery, execSetQuery, strToJSON } = require("../../support");
+const { execQuery, execGetQuery, execSetQuery, strToJSON, convertPath2IMG } = require("../../support");
+const { Company } = require("../Company/Company");
+const { Genre } = require("../Genre/Genre");
+const { User } = require("../User/User");
 
 class Game {
     // +++ ------ Meta data ------ +++ //
     // private fields
     #gameID;
-    #condition = `id='${this.#gameID}'`;
+    #condition;
     #tableName = 'games';
 
     // constructor
     constructor(gameID) {
-        try {
-            const result = execGetQuery(this.#tableName, 'id', this.#condition);
-            if (result.length !== 0) this.#gameID = gameID;
-            else throw new Error("game ID does not exist");
-        } catch (error) {
-            console.log(error);
-            throw error;
-        }
-    }
-
-    // create talbe Games
-    static async createMetaDataTable() {
-        const query = `CREATE TABLE games (
-            id INT AUTO_INCREMENT,
-            title VARCHAR(255) NOT NULL,
-            genres JSON,
-            developers JSON,
-            publisher INT,
-            description TEXT,
-            release_date DATETIME,
-            size DECIMAL(5, 2),
-            PRIMARY KEY (id),
-            FOREIGN KEY (publisher) REFERENCES companies(id)
-        )`;
-        try {
-            const result = await execQuery(query);
-            return result;
-        } catch (error) {
-            throw error;
-        }
+        this.#gameID = gameID;
+        this.#condition = `id=${this.#gameID}`;
     }
 
     // Game ID
@@ -278,23 +253,6 @@ class Game {
         }
     }
 
-    static async createGameStoreRelatedInformationTable() {
-        const query = `CREATE TABLE gameStoreRelatedIn4 (
-            id INT NOT NULL,
-            reviews JSON,
-            original_price DECIMAL(6, 2) NOT NULL,
-            price DECIMAL(6, 2) NOT NULL,
-            PRIMARY KEY (id),
-            FOREIGN KEY (id) REFERENCES games(id)
-        )`;
-        try {
-            const result = await execQuery(query);
-            return result;
-        } catch (error) {
-            throw error;
-        }
-    }
-
     // reviews
     async getReviews() {
         const getField = 'reviews';
@@ -392,6 +350,33 @@ class Game {
         fullData.genres = strToJSON(fullData.genres);
         fullData.developers = strToJSON(fullData.developers);
         fullData.reviews = strToJSON(fullData.reviews);
+
+        const cover_img_url = `cover_imgs/game_${this.#gameID}.png`;
+        const background_img_url = `background_imgs/game_${this.#gameID}.png`;
+
+        const publisherID = fullData.publisher;
+        const devIDs = fullData.developers;
+        fullData.publisher = await new Company(publisherID).getName();
+        fullData.developers = await Promise.all(devIDs.map(async devID => {
+            const dev = await new Company(devID).getName();
+            return dev;
+        }));
+
+        const genreIDs = fullData.genres;
+        fullData.genres = await Promise.all(genreIDs.map(async genreID => {
+            // console.log(genreID);
+            return await new Genre(genreID).getTitle();
+        }))
+
+        fullData.cover_img = convertPath2IMG(cover_img_url);
+        fullData.background_img = convertPath2IMG(background_img_url);
+
+        fullData.avg_point = (fullData.reviews.length !== 0) ? fullData.reviews.reduce((accumulator, currentValue) => (accumulator + currentValue.point), 0) / fullData.reviews.length : 0;
+
+        fullData.reviews = await Promise.all(fullData.reviews.map(async review => {
+            review.reviewer = await new User(review.reviewer).getUsermame();
+            return review;
+        }))
 
         return fullData;
     }

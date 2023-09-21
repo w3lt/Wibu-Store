@@ -36,17 +36,18 @@ async function execRequest() {
 }
 
 async function checkSession() {
+    const route = `/check-session`;
+    const method = "GET";
     try {
-        const response = await fetch(`${server_main_route}/check-session`, {
-            method: "GET",
-            credentials: "include"
-        });
-    
-        const data = await response.json();
-        if (data.status === 0) return data.result;
-        else console.log(data.error);
+        const result = await execRequest(route, method);
+        if (result.id === 0) {
+            return {result: true, uid: result.data.uid};
+        }
+        else {
+            return {result: false};
+        };
     } catch (error) {
-        throw new Error(error);
+        throw error;
     }
 };
 
@@ -115,7 +116,7 @@ async function logout() {
         if (data.status === 0) {
             return 0;
         } else {
-            return data;
+            throw new Error(data.error);
         }
     } catch (error) {
         throw new Error(error);
@@ -123,10 +124,27 @@ async function logout() {
 }
 
 async function fetchGameInfor(gameID) {
-    const route = `/game/${gameID}`;
+    const route = `/games/${gameID}`;
     const method = "GET";
-    const result = await execRequest(route, method);
-    if (result.id === 0) return result.data;
+    try {
+        const result = await execRequest(route, method);
+        if (result.id === 0) return result.data;
+        else console.log(result.msg);
+    } catch (error) {
+        throw error;
+    }
 }
 
-export {checkSession, login, register, logout, fetchGameInfor};
+async function fetchUserInfor(UID, getField) {
+    const route = `/users/${UID}/${getField}`;
+    const method = "GET";
+    try {
+        const result = await execRequest(route, method);
+        if (result.id === 0) return result.data;
+        else console.log(result.msg);
+    } catch (error) {
+        throw error;
+    }
+}
+
+export {checkSession, login, register, logout, fetchGameInfor, fetchUserInfor};
