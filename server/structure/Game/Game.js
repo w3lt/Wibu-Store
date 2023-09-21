@@ -325,7 +325,10 @@ class Game {
         const getField = 'price';
         try {
             const result = await this.#getStoreRelatedData(getField);
-            return result;
+            if (result.length !== 0) return result[0].price;
+            else {
+                throw new Error("Game does not exists");
+            }
         } catch (error) {
             throw error;
         }
@@ -364,7 +367,6 @@ class Game {
 
         const genreIDs = fullData.genres;
         fullData.genres = await Promise.all(genreIDs.map(async genreID => {
-            // console.log(genreID);
             return await new Genre(genreID).getTitle();
         }))
 
@@ -380,6 +382,29 @@ class Game {
 
         return fullData;
     }
+
+    static async calculateOrderAmount(itemIDs) {
+        try {
+            const prices = await Promise.all(itemIDs.map(async (currentID) => {
+                const currentAmount = await new Game(currentID).getPrice();
+                return currentAmount;
+            }));
+    
+
+            
+            // Sum the prices using reduce
+            const totalAmount = prices.reduce((accumulator, currentAmount) => {
+                return accumulator + currentAmount;
+            }, 0);
+            
+
+
+            return totalAmount;
+        } catch (error) {
+            throw error;
+        }
+    }
+    
 }
 
 exports.Game = Game;

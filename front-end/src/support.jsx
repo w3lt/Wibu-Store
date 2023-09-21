@@ -20,7 +20,7 @@ async function execRequest() {
             method: method,
             credentials: "include",
             headers: headers,
-            body: body
+            body: JSON.stringify(body)
         });
 
         const responseData = await response.json();
@@ -147,4 +147,4 @@ async function fetchUserInfor(UID, getField) {
     }
 }
 
-export {checkSession, login, register, logout, fetchGameInfor, fetchUserInfor};
+export {checkSession, login, register, logout, execRequest, fetchGameInfor, fetchUserInfor};

@@ -23,6 +23,9 @@ import giftHoverSymbol from "../../assets/gift_hover.png";
 import loveHoverSymbol from "../../assets/love_hover.png";
 import Details from "./Details/Details";
 import Reviews from "./Reviews/Reviews";
+import Checkout from "../Checkout/Checkout";
+
+import closeSymbol from "../../assets/close-icon.png";
 
 const Game = () => {
 
@@ -45,6 +48,8 @@ const Game = () => {
     const [pointStars, setPointStars] = useState([Array(5).fill(0)]);
 
     const [currentTab, setCurrentTab] = useState(0);
+
+    const [isPaying, setIsPaying] = useState(false);
 
     function handleResize() {
         if (window.innerWidth < 0.7 * window.screen.width) {
@@ -184,7 +189,7 @@ const Game = () => {
                 </div>
 
                 <div className="actions">
-                    <div className="buy-btn">
+                    <div className="buy-btn" onClick={() => {if (isLoggedIn) setIsPaying(true); else navigate("/login") ;}}>
                         <div style={{fontWeight: "600"}}>Buy</div>
                         <div>${gameInfor.price}</div>
                     </div>
@@ -226,6 +231,34 @@ const Game = () => {
                     {(currentTab === 1) && <Reviews avg_point={gameInfor.avg_point} reviews={gameInfor.reviews} pointStars={pointStars} />}
                 </div>
             </div>
+
+            {(isPaying === true) && <div className="is-paying">
+                <div 
+                    style={{
+                        display: "flex", 
+                        width: "41%", 
+                        height: "41%",
+                        backgroundColor: "white",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        borderRadius: "10px"
+                    }}>
+                    <div className="close-btn" onClick={() => {setIsPaying(false)}}>
+                        <img src={closeSymbol} alt="" />
+                    </div>
+                    <Checkout gameInfor={gameInfor} />
+                    <div className="order-summary">
+                        <div className="order-summary-title">Order Summary</div>
+                        <div className="order-summary-cover-img">
+                            <img src={`data:image/jpeg;base64,${gameInfor.cover_img}`} alt="" />
+                        </div>
+                        <div style={{backgroundColor: "white"}}>
+                            <div className="order-summary-game-title">{gameInfor.title}</div>
+                            <div>Price: {gameInfor.price}$</div>
+                        </div>
+                    </div>
+                </div>
+            </div>}
         </div>
     )
 };

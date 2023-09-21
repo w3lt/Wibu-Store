@@ -8,10 +8,12 @@ const path = require('path');
 const MySQLStore = require('express-mysql-session')(session);
 
 const passport = require('passport');
-const { sqlPool, setUp } = require('./support');
+const { sqlPool, calculateOrderAmount } = require('./support');
 const { Response } = require('./response');
 const { Game } = require('./structure/Game/Game');
 const LocalStrategy = require('passport-local').Strategy;
+
+const stripe = require("stripe")('sk_test_51NsNMwJqOqW5UsDeG7q0qN1nEyj6BhcTYcyaNzXXQhtBM86S0CJ2zCs9lzuY6gEHKfmlLAmkx3VSn4fJk3Tsz29L00nOQTJunp');
 
 const User = require('./structure/User/User').User;
 
@@ -155,9 +157,7 @@ app.route('/games/free-to-play')
     .get(async (req, res) => {
         const url = `http://${config.DATA_ANALYSIS_SERVER}:${config.DATA_ANALYSIS_SERVER_PORT}/games/free-to-play`;
         try {
-            console.log(url);
             const response = await axios.get(url);
-            console.log(response.data);
         } catch (error) {
             console.log(error);
             res.send(new Response(1).toJSON());
@@ -179,7 +179,6 @@ app.route('/games/:gameID')
 
 app.route('/users/:userID/:field')
     .get(async (req, res) => {
-        console.log(req.params.userID);
         try {
             const result = await User.checkSession(req.params.userID);
             if (result) {
@@ -193,7 +192,41 @@ app.route('/users/:userID/:field')
             res.send(new Response(1).toJSON());
         }
         
-    })
+    });
+
+app.route("/create-payment-intent")
+    .post(async (req, res) => {
+
+        const { itemIDs } = req.body;
+
+        try {
+            const totalAmount = Math.round(await Game.calculateOrderAmount(itemIDs) * 100);
+        
+            // Create a PaymentIntent with the order amount and currency
+            const paymentIntent = await stripe.paymentIntents.create({
+                amount: totalAmount,
+                currency: "usd",
+                // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
+                automatic_payment_methods: {
+                    enabled: false,
+                },
+                payment_method_types: [
+                    "card"
+                ],
+                payment_method_options: {
+                    card: {
+                        request_three_d_secure: "automatic"
+                    }
+                }
+            });
+
+            res.send(new Response(0, 0, {clientSecret: paymentIntent.client_secret}));
+        } catch (error) {
+            console.log(error);
+            res.send(new Response(1).toJSON());
+        }
+
+    });
 
 const PORT = config.PORT;
 app.listen(PORT, async () => {

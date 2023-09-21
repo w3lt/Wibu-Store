@@ -1,6 +1,7 @@
 const mysql = require('mysql');
 const configs = require('./configs');
 const fs = require('fs');
+// const { Game } = require('./structure/Game/Game');
 
 var pool = mysql.createPool({
     connectionLimit: 10,

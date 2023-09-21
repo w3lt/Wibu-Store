@@ -236,7 +236,6 @@ class User {
         const query = `SELECT uid FROM users WHERE ${accountIDField}='${accountID}' AND password='${hashedPassword}'`;
         try {
             const result = await execQuery(query);
-            console.log(result);
             if (result.length === 1) return result[0];
             else return false;
         } catch (error) {
@@ -282,7 +281,6 @@ class User {
         const query = `SELECT * FROM sessions WHERE session_id='${sessionID}'`;
         try {
             const result = await execQuery(query);
-            console.log(result);
             if (result.length !== 0) return true;
             else return false;
         } catch (error) {

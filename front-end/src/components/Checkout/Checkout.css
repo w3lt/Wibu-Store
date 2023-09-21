@@ -1,0 +1,33 @@
+.checkout {
+    display: flex;
+    margin-right: 10px;
+    width: 70%;
+}
+
+#payment-form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
+#pay-now {
+    display: flex;
+    font-size: 1.2rem;
+    width: 120px;
+    padding: 10px 0;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    border: none;
+    margin-top: 20px;
+}
+
+#pay-now:hover {
+    cursor: pointer;
+}
+
+#payment-element {
+    width: 100%;
+}
