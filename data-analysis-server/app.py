@@ -6,7 +6,7 @@
 # top up-coming
 
 from fastapi import FastAPI
-from routers import freeToPlay
+from routers import freeToPlay, bestDealForYou
 
 from support import *
 
@@ -19,3 +19,4 @@ def read_root():
     return {"message": "Hello, World"}
 
 app.include_router(freeToPlay.router)
+app.include_router(bestDealForYou.router)

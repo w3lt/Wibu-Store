@@ -7,6 +7,8 @@ async function execRequest() {
     const route = arguments[0];
     const method = arguments[1];
 
+    
+
     let headers;
     let body = arguments[2]
 
@@ -24,6 +26,7 @@ async function execRequest() {
         });
 
         const responseData = await response.json();
+        console.log(responseData);
         if (responseData.status === 0) {
             delete responseData.status;
             return responseData;

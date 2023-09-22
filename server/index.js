@@ -76,6 +76,7 @@ app.route('/check-session')
             if (result) {
                 res.send(new Response(0, 0, {uid: req.session.uid}).toJSON());
             } else {
+                console.log("Hello World!");
                 res.send(new Response(0, 5).toJSON());
             }
         } catch (error) {
@@ -180,7 +181,7 @@ app.route('/games/:gameID')
 app.route('/users/:userID/:field')
     .get(async (req, res) => {
         try {
-            const result = await User.checkSession(req.params.userID);
+            const result = await User.checkSession(req.session.id);
             if (result) {
                 const getField = req.params.field;
                 const data = await new User(req.params.userID).get(getField);
@@ -189,6 +190,7 @@ app.route('/users/:userID/:field')
                 res.send(new Response(0, 5).toJSON());
             }
         } catch (error) {
+            console.log(error);
             res.send(new Response(1).toJSON());
         }
         

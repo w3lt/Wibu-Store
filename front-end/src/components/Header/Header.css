@@ -1,0 +1,135 @@
+.header-container {
+    display: flex;
+    position: fixed;
+    width: 100%;
+    background-color: #395B64;
+    padding: 5px 0;
+    align-items: center;
+    z-index: 2;
+}
+
+.store-logo {
+    margin: 0 30px 0 10px;
+    font-family: 'Mynerve', cursive;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(to right, #E4C6EC, #8FCFE5);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: 2rem;
+}
+
+.store-logo:hover {
+    cursor: pointer;
+}
+
+.logo {
+    width: 30px;
+    height: 30px;
+    margin: 0 4px;
+}
+
+
+
+.header-categories-container {
+    display: flex;
+    font-size: 1rem;
+}
+
+.header-category {
+    margin-left: 10px;
+    background-color: transparent;
+	border-radius: 5px;
+	/* border: 1px solid #FBCD81; */
+	display: inline-block;
+	cursor: pointer;
+	color: white;
+	/* font-family: 'Anonymous Pro', monospace; */
+	font-size: 1rem;
+	padding: 6px 12px;
+    text-align: center;
+}
+
+.header-category:hover {
+    transform-origin: center;
+    transform: scale(1.05);
+    background-color: white;
+    color: #395B64;
+}
+
+.search-bar {
+    display: flex;
+    border: solid 1px #9DB2BF;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: white;
+    margin-left: auto;
+    margin-right: 10px;
+}
+
+.search-bar input {
+    height: 25px;
+    display: flex;
+    flex-grow: 1;
+    outline: none;
+    resize: none;
+    border: none;
+    overflow: hidden;
+    margin: 0 5px;
+    color: #9DB2BF;
+    font-size: 1rem;
+}
+
+.search-bar input::placeholder {
+    color: #9DB2BF;
+}
+
+.cart img {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+}
+
+.cart:hover {
+    cursor: pointer;
+
+}
+
+.login-button {
+    background-color: transparent;
+	border-radius: 5px;
+	/* border: 1px solid white; */
+	display: inline-block;
+	cursor: pointer;
+	color: white;
+	font-family: 'Anonymous Pro', monospace;
+	font-size: 1rem;
+	padding: 6px 12px;
+    text-align: center;
+    margin-right: 10px;
+    font-weight: 500;
+}
+
+.login-button:hover {
+    transform-origin: center;
+    transform: scale(1.05);
+    background-color: white;
+    color: #9DB2BF;
+}
+
+.avatar-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+}
+
+.avatar {
+    width: 37px;
+    height: 37px;
+}
+
+.avatar-container:hover {
+    cursor: pointer;
+}

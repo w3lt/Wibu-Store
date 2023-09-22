@@ -373,6 +373,8 @@ class Game {
         fullData.cover_img = convertPath2IMG(cover_img_url);
         fullData.background_img = convertPath2IMG(background_img_url);
 
+        
+
         fullData.avg_point = (fullData.reviews.length !== 0) ? fullData.reviews.reduce((accumulator, currentValue) => (accumulator + currentValue.point), 0) / fullData.reviews.length : 0;
 
         fullData.reviews = await Promise.all(fullData.reviews.map(async review => {

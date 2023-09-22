@@ -5,9 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import "./Game.css";
 import { checkSession, fetchGameInfor, fetchUserInfor, logout } from "../../support";
 
-import logo from "../../assets/logo.png";
-import cartBtnSymbol from "../../assets/cart_button.png";
-import cartBtnHoverSymbol from "../../assets/cart_button_hover.png";
+
 import Loading from "../Loading/Loading";
 
 import starSymbol from "../../assets/star.png";
@@ -26,13 +24,13 @@ import Reviews from "./Reviews/Reviews";
 import Checkout from "../Checkout/Checkout";
 
 import closeSymbol from "../../assets/close-icon.png";
+import Header from "../Header/Header";
 
 const Game = () => {
 
     const navigate = useNavigate();
 
     const [isHoveringOtherBtn, setIsHoveringOtherBtn] = useState(-1);
-    const [isHoveringCartBtn, setIsHoveringCartBtn] = useState(false);
 
     const [isLoading, setIsLoading] = useState(true);
 
@@ -73,6 +71,7 @@ const Game = () => {
                 if (isLoading) {
                     // Load data
                     setGameInfor(await fetchGameInfor(gameID));
+                    console.log(gameInfor);
                     const point = gameInfor.avg_point;
                     const points = Array(5).fill(0);
                     for (let i=0; i<Math.floor(point); i++) {
@@ -101,40 +100,13 @@ const Game = () => {
     
     window.addEventListener('resize', handleResize);
 
-    const headerCategories = ["Latest", "Genre", "Collection", "Deal"];
+    
     
     if (isLoading) return <Loading />;
     else return (
         <div className="Game">
-            <div className="header-container">
-                {isBigEnough ? 
-                    <div className="store-logo">Wibu <img src={logo} alt="" className="logo" /> Store</div>: 
-                    <div className="store-logo"><img src={logo} alt="" className="logo" /></div>}
-
-                <div className="header-categories-container">
-                    {headerCategories.map((category, index) => (
-                        <div className="header-category" key={index}>{category}</div>
-                    ))}
-                </div>
-
-                <div className="search-bar">
-                    <input type="text"
-                        placeholder="Search"
-                    />
-                </div>
-
-                <div className="cart"
-                    onMouseEnter={() => {setIsHoveringCartBtn(true)}}
-                    onMouseLeave={() => {setIsHoveringCartBtn(false)}}>
-                    {isHoveringCartBtn ? <img src={cartBtnHoverSymbol} alt="cart" /> : <img src={cartBtnSymbol} alt="cart" />}
-                </div>
-
-                {isLoggedIn ? 
-                    <div className="avatar-container" onClick={async () => {await logout(); navigate(0)}}>
-                        <img src={`data:image/jpeg;base64,${avatar}`} className="avatar" alt="" />
-                    </div> :
-                    <div className="login-button" onClick={() => {navigate('/login')}}>Login</div>}
-            </div>
+            
+            <Header avatar={avatar} isLoggedIn={isLoggedIn} isBigEnough={isBigEnough} />
 
             <div className="main-content-container">
                 <div className="data-container">

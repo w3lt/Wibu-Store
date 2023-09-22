@@ -47,6 +47,7 @@ class User {
         const getField = "avatar_path";
         try {
             const result = await execGetQuery(this.#tableName, getField, this.#condition);
+            console.log(result);
             if (result.length !== 0) {
                 const avatar = convertPath2IMG(`avatars/${result[0].avatar_path === null ? 'default_avatar.png' : result[0].avatar_path}`);
                 return avatar;
