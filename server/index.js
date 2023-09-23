@@ -8,7 +8,7 @@ const path = require('path');
 const MySQLStore = require('express-mysql-session')(session);
 
 const passport = require('passport');
-const { sqlPool, calculateOrderAmount } = require('./support');
+const { sqlPool } = require('./support');
 const { Response } = require('./response');
 const { Game } = require('./structure/Game/Game');
 const LocalStrategy = require('passport-local').Strategy;
@@ -76,7 +76,6 @@ app.route('/check-session')
             if (result) {
                 res.send(new Response(0, 0, {uid: req.session.uid}).toJSON());
             } else {
-                console.log("Hello World!");
                 res.send(new Response(0, 5).toJSON());
             }
         } catch (error) {
@@ -229,6 +228,37 @@ app.route("/create-payment-intent")
         }
 
     });
+
+app.route('/datas/:field')
+    .post(async (req, res) => {
+        const basePoint = `http://${config.DATA_ANALYSIS_SERVER}:${config.DATA_ANALYSIS_SERVER_PORT}`;
+        const field = req.params.field;
+        switch (field) {
+            case "best-deal-for-you":
+                const number = req.body.number;
+                try {
+                    const response = await fetch(`${basePoint}/games/${field}`, {
+                        method: "POST",
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({number: number})
+                    });
+
+                    const bestDealForYouIDs = await response.json();
+
+                    bestDealForYouGameInfor = await Promise.all(bestDealForYouIDs.map(async gameID => {
+                        const data = await (new Game(gameID)).get("cover_img", "original_price", "price");
+                        return data;
+                    }));
+
+                    res.send(new Response(0, 0, bestDealForYouGameInfor).toJSON());
+
+                } catch (error) {
+                    console.log(error);
+                    res.send(new Response(1).toJSON());
+                }
+                break;
+        }
+    })
 
 const PORT = config.PORT;
 app.listen(PORT, async () => {

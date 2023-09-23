@@ -10,11 +10,16 @@ class Game {
     #condition;
     #tableName = 'games';
 
+    #metaDataFields = ["id", "title", "genres", "developers", "publisher", "description", "release_date", "size", "cover_img"];
+    #storeRelatedDataFields = ["reviews", "original_price", "price", "background_img"];
+
     // constructor
     constructor(gameID) {
         this.#gameID = gameID;
         this.#condition = `id=${this.#gameID}`;
     }
+
+
 
     // Game ID
     getGameID() {
@@ -207,6 +212,18 @@ class Game {
         }
     }
 
+    async getCoverImage() {
+        const getField = 'cover_img_url';
+        try {
+            const result = await execGetQuery(this.#tableName, getField, this.#condition);
+            if (result.length !==0) {
+                return convertPath2IMG(`cover_imgs/${result[0].cover_img_url}`);
+            } else return null;
+        } catch (error) {
+            throw error;
+        }
+    }
+
     // meta data && store related information
     async getFullMetaData() {
         const query = `SELECT * FROM ${this.#tableName} WHERE ${this.#condition}`;
@@ -225,7 +242,7 @@ class Game {
     // +++ ------ Store-related data ------ ++ //
     #storeRelatedIn4TableName = 'gameStoreRelatedIn4';
 
-    async getStoreRelatedInformation() {
+    async getFullStoreRelatedData() {
         const query = `SELECT * FROM ${this.#storeRelatedIn4TableName} WHERE ${this.#condition}`;
         try {
             const result = await execQuery(query);
@@ -237,8 +254,15 @@ class Game {
 
     async #getStoreRelatedData(getField) {
         try {
-            const result = await execGetQuery(this.#storeRelatedIn4TableName, getField, this.#condition);
-            return result;
+            let result;
+            if (getField === "background_img") {
+                // result = await this.getBackgroundImage();
+                // return result;
+            } else {
+                result = await execGetQuery(this.#storeRelatedIn4TableName, getField, this.#condition);
+                if (result.length !== 0) return result[0][getField];
+                else return null;
+            }
         } catch (error) {
             throw error;
         }
@@ -347,7 +371,7 @@ class Game {
     // -------------------------- //
     async getFullData() {
         const metaData = await this.getFullMetaData();
-        const storeRelatedData = await this.getStoreRelatedInformation();
+        const storeRelatedData = await this.getFullStoreRelatedData();
         const fullData = {...metaData, ...storeRelatedData};
 
         fullData.genres = strToJSON(fullData.genres);
@@ -405,6 +429,33 @@ class Game {
         } catch (error) {
             throw error;
         }
+    }
+
+    async #getMetaData(getField) {
+        try {
+            let result;
+            if (getField === "cover_img") {
+                result = await this.getCoverImage();
+                return result;
+            } else {
+                result = await execGetQuery(this.#tableName, getField, this.#condition);
+                if (result.length !== 0) return result[0][getField];
+                else return null;
+            }
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async get(...fields) {
+        const result = await Promise.all(fields.map(async field => {
+            if (this.#metaDataFields.includes(field)) {
+                return await this.#getMetaData(field);
+            } else if (this.#storeRelatedDataFields.includes(field)) {
+                return await this.#getStoreRelatedData(field);
+            }
+        }))
+        return result;
     }
     
 }

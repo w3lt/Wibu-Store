@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import "./Dashboard.css";
 import Header from "../Header/Header";
+import { execRequest } from "../../support";
 
 
 
@@ -17,6 +18,13 @@ const Dashboard = () => {
     const [bestDealForYou, setBestDealForYou] = useState(Array(5).fill(null));
     const [freeToPlay, setFreeToPlay] = useState(Array(5).fill(null));
 
+    useEffect(() => {
+        (async () => {
+            const response = await execRequest("/datas/best-deal-for-you", "POST", {number: 10});
+            console.log(response);
+        }) ();
+    }, []);
+
     return (
         <div className="dashboard">
             <Header avatar={avatar} isLoggedIn={isLoggedIn} isBigEnough={isBigEnough} />
@@ -26,9 +34,9 @@ const Dashboard = () => {
 
             <div className="best-deal-for-you-container">
                 <div>Best Deal For You</div>
-                {bestDealForYou.map(game => {
+                {bestDealForYou.map((game, index) => {
                     return (
-                        <div className="best-deal-for-you">
+                        <div key={index} className="best-deal-for-you">
 
                         </div>
                     )
@@ -36,9 +44,9 @@ const Dashboard = () => {
             </div>
 
             <div className="free-to-play-container">
-                {freeToPlay.map(game => {
+                {freeToPlay.map((game, index) => {
                     return (
-                        <div className="free-to-play">
+                        <div key={index} className="free-to-play">
 
                         </div>
                     )

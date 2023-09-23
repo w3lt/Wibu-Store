@@ -6,7 +6,8 @@
 # top up-coming
 
 from fastapi import FastAPI
-from routers import freeToPlay, bestDealForYou
+from routers import freeToPlay
+from routers.bestDealForYou import bestDealForYou
 
 from support import *
 
