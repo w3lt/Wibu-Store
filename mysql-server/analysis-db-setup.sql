@@ -6,3 +6,27 @@ CREATE TABLE usertrackers (
     PRIMARY KEY (uid),
     FOREIGN KEY (uid) REFERENCES users(uid)
 );
+
+CREATE TABLE topsellers_month (
+    month VARCHAR(255),
+    id INT,
+    sell_number INT NOT NULL,
+    PRIMARY KEY (month),
+    FOREIGN KEY (id) REFERENCES games(id)
+);
+
+CREATE TABLE topsellers_quarter (
+    quarter VARCHAR(255),
+    id INT,
+    sell_number INT NOT NULL,
+    PRIMARY KEY (quarter),
+    FOREIGN KEY (id) REFERENCES games(id)
+);
+
+CREATE TABLE topsellers_year (
+    year VARCHAR(255),
+    id INT,
+    sell_number INT NOT NULL,
+    PRIMARY KEY (year),
+    FOREIGN KEY (id) REFERENCES games(id)
+);

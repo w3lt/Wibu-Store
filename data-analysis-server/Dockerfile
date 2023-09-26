@@ -5,6 +5,7 @@ WORKDIR /data-analysis-server
 COPY requirements.txt .
 RUN pip3 install -r requirements.txt
 COPY . .
+RUN chmod +x ./run.sh
 
 
-CMD [ "uvicorn", "app:app", "--host", "0.0.0.0", "--port", "80", "--reload" ]
+CMD [ "./run.sh" ]

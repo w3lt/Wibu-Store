@@ -448,11 +448,13 @@ class Game {
     }
 
     async get(...fields) {
-        const result = await Promise.all(fields.map(async field => {
+        const result = {};
+        await Promise.all(fields.map(async field => {
+
             if (this.#metaDataFields.includes(field)) {
-                return await this.#getMetaData(field);
+                result[field] = await this.#getMetaData(field);
             } else if (this.#storeRelatedDataFields.includes(field)) {
-                return await this.#getStoreRelatedData(field);
+                result[field] = await this.#getStoreRelatedData(field);
             }
         }))
         return result;

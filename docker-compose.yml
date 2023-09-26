@@ -29,23 +29,6 @@ services:
       - mysql
       - server
 
-  purchase-server:
-    build:
-      context: ./purchase-server
-      dockerfile: Dockerfile
-    volumes:
-      - ./purchase-server:/purchase-server
-    networks:
-      - my-network
-    environment:
-      - MYSQL_HOST=mysql
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=my-secret-password
-      - MYSQL_DATABASE=WibuStore
-    depends_on:
-      - mysql
-      - server
-
   server:
     build:
       context: ./server

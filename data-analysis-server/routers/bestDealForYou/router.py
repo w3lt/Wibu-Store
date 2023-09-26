@@ -20,7 +20,7 @@ def getBestDealForYou(uid, number):
             FROM games
             JOIN gameStoreRelatedIn4
             ON games.id = gameStoreRelatedIn4.id
-            WHERE games.id={gameID}
+            WHERE games.id={gameID};
         """)[0])
 
         data[0] = float(data[0])
@@ -65,7 +65,7 @@ def getBestDealForYou(uid, number):
 
 
     
-    best_deal_points = sorted(best_deal_points, key=lambda x: x[1], reverse=True)
+    best_deal_points = sorted(best_deal_points, key=lambda x: x[1])
     
     return [best_deal_point[0] for best_deal_point in best_deal_points[0:number]]
 

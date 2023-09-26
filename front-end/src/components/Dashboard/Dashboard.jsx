@@ -20,8 +20,10 @@ const Dashboard = () => {
 
     useEffect(() => {
         (async () => {
-            const response = await execRequest("/datas/best-deal-for-you", "POST", {number: 10});
-            console.log(response);
+            const bestDealForYouResponse = await execRequest("/datas/best-deal-for-you", "POST", {number: 10});
+            console.log(bestDealForYouResponse);
+            const topSellersResponse = await execRequest("/datas/top-sellers", "POST", {start_index: 0, count: 5});
+            console.log(topSellersResponse);
         }) ();
     }, []);
 

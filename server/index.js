@@ -244,19 +244,55 @@ app.route('/datas/:field')
                     });
 
                     const bestDealForYouIDs = await response.json();
+                    console.log(bestDealForYouIDs);
+                    if (bestDealForYouIDs["error"]) {
+                        console.log(bestDealForYouIDs["error"]);
+                        res.send(new Response(1).toJSON());
+                    } else {
+                        const bestDealForYouGameInfor = await Promise.all(bestDealForYouIDs.map(async gameID => {
+                            const data = await (new Game(gameID)).get("cover_img", "title", "original_price", "price");
+                            return data;
+                        }));
+                        res.send(new Response(0, 0, bestDealForYouGameInfor).toJSON());
+                    }
+                } catch (error) {
+                    console.log(error);
+                    res.send(new Response(1).toJSON());
+                }
+                break;
+            case "top-sellers":
+                const start_index = req.body.start_index;
+                const count = req.body.count;
+                try {
+                    const response = await fetch(`${basePoint}/games/${field}`, {
+                        method: "POST",
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({start_index: start_index, count: count})
+                    });
 
-                    bestDealForYouGameInfor = await Promise.all(bestDealForYouIDs.map(async gameID => {
-                        const data = await (new Game(gameID)).get("cover_img", "original_price", "price");
-                        return data;
-                    }));
+                    const topSellerIDs = await response.json();
+                    if (topSellerIDs["error"]) {
+                        console.log(topSellerIDs["error"]);
+                        res.send(new Response(1).toJSON());
+                    } else {
+                        const topSellerInfor = await Promise.all(topSellerIDs.map(topSellerID => {
+                            const data = new Game(topSellerID).get("cover_img", "title", "original_price", "price");
+                            return data;
+                        }));
 
-                    res.send(new Response(0, 0, bestDealForYouGameInfor).toJSON());
+                        res.send(new Response(0, 0, topSellerInfor).toJSON());
+                    }
+
+                    
+
+                    
 
                 } catch (error) {
                     console.log(error);
                     res.send(new Response(1).toJSON());
                 }
                 break;
+
         }
     })
 
