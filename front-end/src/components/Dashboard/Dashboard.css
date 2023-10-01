@@ -1,0 +1,113 @@
+.top-banners-container {
+    position: relative;
+    
+}
+
+.top-banners-container img {
+    width: 100%;
+}
+
+.navigate-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.navigate-btn:hover {
+    cursor: pointer;
+}
+
+.navigate-btn > img {
+    width: 50px;
+    height: 50px;
+    border: 1px solid black;
+    border-radius: 50%;
+}
+
+.previous-btn {
+    left: 10px;
+}
+
+.next-btn {
+    right: 10px;
+}
+
+.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.switch-banner-tab {
+    display: block;
+    height: 100%;
+    background-color: white;
+    width: 100%;
+    animation: count 5s infinite;
+}
+
+@keyframes count {
+    from {
+        width: 0;
+    }
+    to {
+        width: 50px;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+    }
+    to {
+        transform: translateX(0%);
+    }
+}
+  
+@keyframes slideOut {
+    from {
+        transform: translateX(0%);
+    }
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+.best-deal-for-you-container {
+    display: flex;
+    flex-direction: column;
+    margin-top: 50px;
+}
+
+.best-deal-for-you-container .title {
+    font-size: 2rem;
+}
+
+.best-deal-for-you-container .games {
+    display: flex;
+    flex-direction: row;
+    /* margin: 0 auto; */
+}
+
+.best-deal-for-you {
+    --item-space: 15px;
+    margin-right: var(--item-space, 10px);
+    width: calc((100% - var(var(--item-space))*4) / 5);
+}
+
+.best-deal-for-you .cover-img {
+    height: auto;
+    margin-right: 0;
+}
+
+.best-deal-for-you .cover-img img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 180 / 240;
+}
+
+.sale-percentage {
+    background-color: #00BF63;
+    padding: 3px 10px;
+    border-radius: 5px;
+    margin-right: 21%;
+}

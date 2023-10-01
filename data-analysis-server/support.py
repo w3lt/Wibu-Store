@@ -16,6 +16,8 @@ def executeQuery(query):
         cursor = connection.cursor()
         
         cursor.execute(query)
+        if (query.strip()[:6].lower() != "select"):
+            connection.commit()
 
         result = cursor.fetchall()
         return result

@@ -8,7 +8,7 @@ const path = require('path');
 const MySQLStore = require('express-mysql-session')(session);
 
 const passport = require('passport');
-const { sqlPool } = require('./support');
+const { sqlPool, convertPath2IMG } = require('./support');
 const { Response } = require('./response');
 const { Game } = require('./structure/Game/Game');
 const LocalStrategy = require('passport-local').Strategy;
@@ -229,8 +229,9 @@ app.route("/create-payment-intent")
 
     });
 
-app.route('/datas/:field')
+app.route('/datas/:field/:subfield?')
     .post(async (req, res) => {
+        console.log("HEllow EOlwer");
         const basePoint = `http://${config.DATA_ANALYSIS_SERVER}:${config.DATA_ANALYSIS_SERVER_PORT}`;
         const field = req.params.field;
         switch (field) {
@@ -259,12 +260,13 @@ app.route('/datas/:field')
                     console.log(error);
                     res.send(new Response(1).toJSON());
                 }
-                break;
+                return;
             case "top-sellers":
+                const subfield = req.params.subfield;
                 const start_index = req.body.start_index;
                 const count = req.body.count;
                 try {
-                    const response = await fetch(`${basePoint}/games/${field}`, {
+                    const response = await fetch(`${basePoint}/games/${field}/${subfield}`, {
                         method: "POST",
                         headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify({start_index: start_index, count: count})
@@ -282,17 +284,28 @@ app.route('/datas/:field')
 
                         res.send(new Response(0, 0, topSellerInfor).toJSON());
                     }
-
-                    
-
-                    
-
                 } catch (error) {
                     console.log(error);
                     res.send(new Response(1).toJSON());
                 }
                 break;
+        }
+    })
 
+app.route('/top-banners')
+    .get(async (req, res) => {
+        const topBannersDirPath = `${__dirname}/assets/top_banners`;
+
+        try {
+            const fileNames = await fs.readdir(topBannersDirPath);
+            const topBanners = await Promise.all(fileNames.map(fileName => {
+                return convertPath2IMG(`top_banners/${fileName}`);
+            }));
+
+            res.send(new Response(0, 0, topBanners));
+        } catch (error) {
+            console.log(error);
+            res.send(new Response(1).toJSON());
         }
     })
 
