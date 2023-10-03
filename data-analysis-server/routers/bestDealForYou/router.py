@@ -16,7 +16,7 @@ def getBestDealForYou(uid, number):
     datas = []
     for gameID in favorite_game_list:
         data = list(executeQuery(f"""
-            SELECT price, size, genres, developers
+            SELECT price, size, types, developers
             FROM games
             JOIN gameStoreRelatedIn4
             ON games.id = gameStoreRelatedIn4.id
@@ -30,8 +30,8 @@ def getBestDealForYou(uid, number):
 
         datas.append(data)
 
-    favorite_genres = set(np.concatenate([genres[2] for genres in datas]))
-    favorite_devs = set(np.concatenate([genres[3] for genres in datas]))
+    favorite_types = set(np.concatenate([data[2] for data in datas]))
+    favorite_devs = set(np.concatenate([data[3] for data in datas]))
 
     datas = np.array([[data[0], data[1]] for data in datas])
     
@@ -40,7 +40,7 @@ def getBestDealForYou(uid, number):
     
     
     games = executeQuery(f"""
-            SELECT games.id, price, size, genres, developers
+            SELECT games.id, price, size, types, developers
             FROM games
             JOIN gameStoreRelatedIn4
             ON games.id = gameStoreRelatedIn4.id
@@ -54,10 +54,10 @@ def getBestDealForYou(uid, number):
         id = game[0]
         price = float(game[1])
         size = float(game[2])
-        genres = set(json.loads(game[3]))
+        types = set(json.loads(game[3]))
         devs = set(json.loads(game[4]))
 
-        delta_1 = 0 if genres.intersection(favorite_genres) else 1
+        delta_1 = 0 if types.intersection(favorite_types) else 1
         delta_2 = 0 if devs.intersection(favorite_devs) else 1
 
         best_deal_point = math.sqrt(0.55*((1-(price/avg_price))**2) + 0.15*((1-(size/avg_size))**2) + 0.15*delta_1 + 0.15*delta_2)

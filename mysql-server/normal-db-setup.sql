@@ -14,7 +14,7 @@ CREATE TABLE users (
 );
 
 -- create genres table
-CREATE TABLE genres (
+CREATE TABLE types (
     id INT AUTO_INCREMENT,
     title VARCHAR(255) NOT NULL,
     PRIMARY KEY (id)
@@ -32,13 +32,14 @@ CREATE TABLE companies (
 CREATE TABLE games (
     id INT AUTO_INCREMENT,
     title VARCHAR(255) NOT NULL,
-    genres JSON,
-    developers JSON,
-    publisher INT,
+    types JSON,
+    developers JSON NOT NULL,
+    publisher INT NOT NULL,
     description TEXT,
-    release_date DATETIME,
-    size DECIMAL(5, 2),
-    cover_img_url VARCHAR(255),
+    release_date DATETIME NOT NULL,
+    size DECIMAL(5, 2) NOT NULL,
+    cover_img_url VARCHAR(255) NOT NULL,
+    supported_platforms JSON NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (publisher) REFERENCES companies(id)
 );

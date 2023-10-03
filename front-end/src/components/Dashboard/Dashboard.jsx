@@ -2,13 +2,16 @@ import React, { useEffect, useState } from "react";
 
 import "./Dashboard.css";
 import Header from "../Header/Header";
-import { execRequest, getBestDealForYou, getTopBanners } from "../../support";
+import { execRequest, getDatas, getTopBanners } from "../../support";
 
 import nextBannerSymbol from "../../assets/next_banner.png";
 import previousBannerSymbol from "../../assets/previous_banner.png";
+import { useNavigate } from "react-router-dom";
 
 
 const Dashboard = () => {
+
+    const navigate = useNavigate();
 
     const [isLoading, setIsLoading] = useState(true);
     const [avatar, setAvatar] = useState(null);
@@ -21,7 +24,9 @@ const Dashboard = () => {
     const [bestDealForYou, setBestDealForYou] = useState(Array(5).fill({}));
     const [freeToPlay, setFreeToPlay] = useState(Array(5).fill(null));
 
-    
+    const otherTags = ["News", "Trending", "Top Seller", "Most Played", "Top Upcoming"];
+    const [otherTagsData, setOtherTagsData] = useState(Array(5).fill({}));
+    const [selectedTag, setSelectedTag] = useState(-1);
 
     useEffect(() => {
         (async () => {
@@ -31,10 +36,12 @@ const Dashboard = () => {
                 setTopBanners(topBanners);
 
                 // best deal for you
-                const bestDealForYou = await getBestDealForYou();
+                const bestDealForYou = await getDatas('best-deal-for-you');
                 setBestDealForYou(bestDealForYou);
 
-                console.log(bestDealForYou);
+                // free to play
+                const freeToPlay = await getDatas('free-to-play');
+                setFreeToPlay(freeToPlay);
 
                 // const topSellersResponse = await execRequest("/datas/top-sellers/year", "POST", {start_index: 0, count: 5});
                 // console.log(topSellersResponse);
@@ -45,11 +52,12 @@ const Dashboard = () => {
         }) ();
     }, []);
 
-    return (
+    if (isLoading) return null;
+    else return (
         <div className="dashboard">
             <Header avatar={avatar} isLoggedIn={isLoggedIn} isBigEnough={isBigEnough} />
             {!isLoading &&
-            <div style={{position: "relative", top: "52px", display: "flex", flexDirection: 'column', alignItems: "center"}}>
+            <div style={{position: "relative", top: "52px", display: "flex", flexDirection: 'column', alignItems: "center", backgroundColor: "#302F2F", color: "white"}}>
                 <div style={{display: "flex", flexDirection: "column", width: "70%"}}>
                     <div className="top-banners-container">
                         <div className={`navigate-btn previous-btn ${topBannerIndex === 0 ? "disabled" : ""}`} onClick={() => setTopBannerIndex(previous => previous-1)}>
@@ -87,7 +95,7 @@ const Dashboard = () => {
                             {bestDealForYou.map((game, index) => {
                                 return (
                                     <div key={index} className="best-deal-for-you" style={index === 4 ? {marginRight: "0"} : {}}>
-                                        <div className="cover-img">
+                                        <div className="cover-img" onClick={() => navigate(`/game/${game.id}`)}>
                                             <img src={`data:image/jpeg;base64,${game.cover_img}`} alt="" />
                                         </div>
                                         <div style={{fontSize: "1.2rem", fontWeight: "500"}}>{game.title}</div>
@@ -105,13 +113,60 @@ const Dashboard = () => {
                     </div>
 
                     <div className="free-to-play-container">
-                        {freeToPlay.map((game, index) => {
-                            return (
-                                <div key={index} className="free-to-play">
+                        <div className="title">Free To Play</div>
+                        <div className="games">
+                            {freeToPlay.map((game, index) => {
+                                return (
+                                    <div key={index} className="free-to-play" style={index === 4 ? {marginRight: "0"} : {}}>
+                                        <div className="cover-img" onClick={() => navigate(`/game/${game.id}`)}>
+                                            <img src={`data:image/jpeg;base64,${game.cover_img}`} alt="" />
+                                            <div style={{fontSize: "1.2rem", fontWeight: "500"}}>{game.title}</div>
+                                            <div>Free</div>
+                                        </div>
+                                    </div>
+                                )
+                            })}
+                        </div>
+                    </div>
 
+                    <div className="other-tags-container">
+                        <div className="tag-names">
+                            {otherTags.map((tag, index) => (
+                                <div key={index} onClick={async () => {
+                                    
+                                    try {
+                                        switch (index) {
+                                            case 0:
+                                                setOtherTagsData(await getDatas('news'));
+                                                break;
+                                            case 1:
+                                                setOtherTagsData(await getDatas('trending'));
+                                                break;
+                                            case 2:
+                                                setOtherTagsData(await getDatas('top-seller'));
+                                                break;
+                                            case 3:
+                                                setOtherTagsData(await getDatas('most-played'));
+                                                break;
+                                            case 4:
+                                                setOtherTagsData(await getDatas('top-coming'));
+                                                break;
+                                        }
+                                        console.log(otherTagsData);
+                                        setSelectedTag(index);
+                                    } catch (error) {
+                                        console.log(error);
+                                    }
+                                }}>
+                                    {tag}
+                                    <span />
                                 </div>
-                            )
-                        })}
+                            ))}
+                        </div>
+
+                        <div>
+                            
+                        </div>
                     </div>
                 </div>
             </div>}

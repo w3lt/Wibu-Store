@@ -159,8 +159,8 @@ async function getTopBanners() {
     }
 }
 
-async function getBestDealForYou() {
-    const route = '/datas/best-deal-for-you';
+async function getDatas(dataType) {
+    const route = `/datas/${dataType}`;
     const method = "POST";
     try {
         const result = await execRequest(route, method, {number: 5});
@@ -172,4 +172,4 @@ async function getBestDealForYou() {
 }
 
 export {checkSession, login, register, logout, execRequest, fetchGameInfor, fetchUserInfor,
-        getTopBanners, getBestDealForYou};
+        getTopBanners, getDatas};

@@ -1,6 +1,6 @@
 const { execQuery, execGetQuery, execSetQuery, strToJSON, convertPath2IMG } = require("../../support");
 const { Company } = require("../Company/Company");
-const { Genre } = require("../Genre/Genre");
+const { Type } = require("../Type/Type");
 const { User } = require("../User/User");
 
 class Game {
@@ -10,7 +10,7 @@ class Game {
     #condition;
     #tableName = 'games';
 
-    #metaDataFields = ["id", "title", "genres", "developers", "publisher", "description", "release_date", "size", "cover_img"];
+    #metaDataFields = ["id", "title", "types", "developers", "publisher", "description", "release_date", "size", "cover_img"];
     #storeRelatedDataFields = ["reviews", "original_price", "price", "background_img"];
 
     // constructor
@@ -47,9 +47,9 @@ class Game {
         }
     }
 
-    // genres
-    async getGenres() {
-        const getField = 'genres';
+    // types
+    async getTypes() {
+        const getField = 'types';
         try {
             const result = await execGetQuery(this.#tableName, getField, this.#condition);
             return result.split(', ');
@@ -58,13 +58,13 @@ class Game {
         }
     }
 
-    async setGenres(genres) {
-        var newGenres;
+    async setTypes(types) {
+        var newTypes;
 
-        if (typeof genres === "string") newGenres = genres;
-        else newGenres = genres.join(', ');
+        if (typeof types === "string") newTypes = types;
+        else newTypes = types.join(', ');
 
-        const setStatement = `genres='${newGenres}'`;
+        const setStatement = `types='${newTypes}'`;
         try {
             const result = await execSetQuery(this.#tableName, setStatement, this.#condition);
             return result;
@@ -73,26 +73,26 @@ class Game {
         }
     }
 
-    async addGenres(newGenres) {
+    async addTypes(newTypes) {
         try {
-            const oldGenres = await this.getGenres();
-            const genres = [...new Set([...oldGenres, ...newGenres])];
+            const oldtypes = await this.getTypes();
+            const types = [...new Set([...oldtypes, ...newTypes])];
 
-            const result = await this.setGenres(genres);
+            const result = await this.setTypes(types);
             return result;
         } catch (error) {
             throw error;
         }
     }
 
-    async removeGenres(removedGenres) {
+    async removeTypes(removedTypes) {
         try {
-            const oldGenres = await this.getGenres();
-            removedGenres.forEach(genre => {
-                oldGenres.splice(oldGenres.indexOf(genre), 1);
+            const oldtypes = await this.getTypes();
+            removedTypes.forEach(genre => {
+                oldtypes.splice(oldtypes.indexOf(genre), 1);
             })
-            const genres = this.setGenres(oldGenres);
-            return genres;
+            const types = this.setTypes(oldtypes);
+            return types;
         } catch (error) {
             throw error;
         }
@@ -374,7 +374,7 @@ class Game {
         const storeRelatedData = await this.getFullStoreRelatedData();
         const fullData = {...metaData, ...storeRelatedData};
 
-        fullData.genres = strToJSON(fullData.genres);
+        fullData.types = strToJSON(fullData.types);
         fullData.developers = strToJSON(fullData.developers);
         fullData.reviews = strToJSON(fullData.reviews);
 
@@ -389,8 +389,8 @@ class Game {
             return dev;
         }));
 
-        const genreIDs = fullData.genres;
-        fullData.genres = await Promise.all(genreIDs.map(async genreID => {
+        const genreIDs = fullData.types;
+        fullData.types = await Promise.all(genreIDs.map(async genreID => {
             return await new Genre(genreID).getTitle();
         }))
 

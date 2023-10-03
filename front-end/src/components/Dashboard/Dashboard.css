@@ -99,6 +99,10 @@
     margin-right: 0;
 }
 
+.best-deal-for-you .cover-img:hover {
+    cursor: pointer;
+}
+
 .best-deal-for-you .cover-img img {
     width: 100%;
     height: auto;
@@ -110,4 +114,80 @@
     padding: 3px 10px;
     border-radius: 5px;
     margin-right: 21%;
+}
+
+.free-to-play-container {
+    display: flex;
+    flex-direction: column;
+    margin-top: 50px;
+    height: auto;
+}
+
+.free-to-play-container .title {
+    font-size: 2rem;
+}
+
+.free-to-play-container .games {
+    display: flex;
+    flex-direction: row;
+    margin: 0 auto;
+}
+
+.free-to-play {
+    --item-space: 15px;
+    margin-right: var(--item-space, 10px);
+    width: calc((100% - var(var(--item-space))*4) / 5);
+}
+
+.free-to-play .cover-img {
+    height: auto;
+    margin-right: 0;
+}
+
+.free-to-play .cover-img:hover {
+    cursor: pointer;
+}
+
+.free-to-play .cover-img img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 180 / 240;
+}
+
+.other-tags-container {
+    margin-top: 50px;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 50px;
+}
+
+.other-tags-container .tag-names {
+    display: flex;
+    flex-direction: row;
+}
+
+.other-tags-container .tag-names > div {
+    margin-right: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+.other-tags-container .tag-names > div:hover {
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.other-tags-container .tag-names > div:hover span {
+    width: 30px;
+}
+
+.other-tags-container .tag-names > div span {
+    width: 0;
+    height: 3px;
+    border-radius: 3px;
+    background-color: white;
+    transition: width 0.3s ease;
 }

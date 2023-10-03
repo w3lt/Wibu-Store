@@ -1,8 +1,8 @@
 const { execQuery, execGetQuery, execSetQuery } = require("../../support");
 
-class Genre {
+class Type {
     #id;
-    #tableName = 'genres';
+    #tableName = 'types';
     #condition;
 
     constructor(genreID) {
@@ -10,8 +10,8 @@ class Genre {
         this.#condition = `id='${this.#id}'`;
     }
 
-    static async createGenresTable() {
-        const query = `CREATE TABLE genres (
+    static async createTypesTable() {
+        const query = `CREATE TABLE types (
             id INT AUTO_INCREMENT,
             title VARCHAR(255) NOT NULL,
             PRIMARY KEY (id)
@@ -47,4 +47,4 @@ class Genre {
     }
 }
 
-exports.Genre = Genre;
+exports.Type = Type;

@@ -20,7 +20,7 @@ class Body(BaseModel):
     start_index: int
     count: int
 
-@router.post("/games/top-sellers/{subfield}")
+@router.post("/games/top-seller/{subfield}")
 def read_item(body: Body, subfield: str):
     try:
         myTopSellers = getTopSellers(subfield, body.start_index, body.count)

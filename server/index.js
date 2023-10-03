@@ -153,17 +153,6 @@ app.route('/logout')
         });
     });
 
-app.route('/games/free-to-play')
-    .get(async (req, res) => {
-        const url = `http://${config.DATA_ANALYSIS_SERVER}:${config.DATA_ANALYSIS_SERVER_PORT}/games/free-to-play`;
-        try {
-            const response = await axios.get(url);
-        } catch (error) {
-            console.log(error);
-            res.send(new Response(1).toJSON());
-        }
-    })
-
 app.route('/games/:gameID')
     .get(async (req, res) => {
         const gameID = req.params.gameID;
@@ -231,12 +220,11 @@ app.route("/create-payment-intent")
 
 app.route('/datas/:field/:subfield?')
     .post(async (req, res) => {
-        console.log("HEllow EOlwer");
         const basePoint = `http://${config.DATA_ANALYSIS_SERVER}:${config.DATA_ANALYSIS_SERVER_PORT}`;
         const field = req.params.field;
+        const number = req.body.number;
         switch (field) {
             case "best-deal-for-you":
-                const number = req.body.number;
                 try {
                     const response = await fetch(`${basePoint}/games/${field}`, {
                         method: "POST",
@@ -245,13 +233,12 @@ app.route('/datas/:field/:subfield?')
                     });
 
                     const bestDealForYouIDs = await response.json();
-                    console.log(bestDealForYouIDs);
                     if (bestDealForYouIDs["error"]) {
                         console.log(bestDealForYouIDs["error"]);
                         res.send(new Response(1).toJSON());
                     } else {
                         const bestDealForYouGameInfor = await Promise.all(bestDealForYouIDs.map(async gameID => {
-                            const data = await (new Game(gameID)).get("cover_img", "title", "original_price", "price");
+                            const data = await (new Game(gameID)).get("id", "cover_img", "title", "original_price", "price");
                             return data;
                         }));
                         res.send(new Response(0, 0, bestDealForYouGameInfor).toJSON());
@@ -259,12 +246,14 @@ app.route('/datas/:field/:subfield?')
                 } catch (error) {
                     console.log(error);
                     res.send(new Response(1).toJSON());
-                }
-                return;
-            case "top-sellers":
-                const subfield = req.params.subfield;
-                const start_index = req.body.start_index;
-                const count = req.body.count;
+                } finally {
+                    break;
+                }   
+                
+            case "top-seller":
+                const subfield = "month";
+                const start_index = 0;
+                const count = 5;
                 try {
                     const response = await fetch(`${basePoint}/games/${field}/${subfield}`, {
                         method: "POST",
@@ -277,8 +266,8 @@ app.route('/datas/:field/:subfield?')
                         console.log(topSellerIDs["error"]);
                         res.send(new Response(1).toJSON());
                     } else {
-                        const topSellerInfor = await Promise.all(topSellerIDs.map(topSellerID => {
-                            const data = new Game(topSellerID).get("cover_img", "title", "original_price", "price");
+                        const topSellerInfor = await Promise.all(topSellerIDs.map(async topSellerID => {
+                            const data = await (new Game(topSellerID)).get("id", "cover_img", "title", "original_price", "price");
                             return data;
                         }));
 
@@ -287,8 +276,52 @@ app.route('/datas/:field/:subfield?')
                 } catch (error) {
                     console.log(error);
                     res.send(new Response(1).toJSON());
+                } finally {
+                    break;
                 }
-                break;
+            case 'free-to-play':
+                try {
+                    const response = await fetch(`${basePoint}/games/${field}`, {
+                        method: "POST",
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({number: number})
+                    });
+    
+                    const freeToPlayIDs = await response.json();
+                    console.log(freeToPlayIDs);
+                    if (freeToPlayIDs["error"]) {
+                        console.log(freeToPlayIDs["error"]);
+                        res.send(new Response(1).toJSON());
+                    } else {
+                        const freeToPlayInfor = await Promise.all(freeToPlayIDs.map(async freeToPlayID => {
+                            const data = await (new Game(freeToPlayID)).get("id", "cover_img", "title");
+                            return data;
+                        }));
+
+                        res.send(new Response(0, 0, freeToPlayInfor).toJSON());
+                    }
+                } catch (error) {
+                    console.log(error);
+                    res.send(new Response(1).toJSON()); 
+                } finally {
+                    break;
+                }
+
+            default:
+                try {
+                    const response = await fetch(`${basePoint}/games/${field}`, {
+                        method: "POST",
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({number: number})
+                    });
+
+                    const targetGameIDs = await response.json();
+                } catch (error) {
+                    console.log(error);
+                    res.send(new Response(1).toJSON()); 
+                } finally {
+                    break;
+                }                
         }
     })
 
