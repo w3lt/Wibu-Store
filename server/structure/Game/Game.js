@@ -349,7 +349,7 @@ class Game {
         const getField = 'price';
         try {
             const result = await this.#getStoreRelatedData(getField);
-            if (result.length !== 0) return result[0].price;
+            if (result !== null) return result;
             else {
                 throw new Error("Game does not exists");
             }
@@ -389,9 +389,9 @@ class Game {
             return dev;
         }));
 
-        const genreIDs = fullData.types;
-        fullData.types = await Promise.all(genreIDs.map(async genreID => {
-            return await new Genre(genreID).getTitle();
+        const typeIDs = fullData.types;
+        fullData.types = await Promise.all(typeIDs.map(async typeID => {
+            return await new Type(typeID).getTitle();
         }))
 
         fullData.cover_img = convertPath2IMG(cover_img_url);

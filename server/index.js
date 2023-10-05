@@ -162,6 +162,7 @@ app.route('/games/:gameID')
             const gameData = await game.getFullData();
             res.send(new Response(0, 0, gameData).toJSON());
         } catch (error) {
+            console.error(error);
             res.send(new Response(1).toJSON());
         }
     });
