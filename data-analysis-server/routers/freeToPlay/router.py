@@ -15,7 +15,9 @@ def getFreeToPlay(number):
         LIMIT {number};
     """
     result = executeQuery(query=query)
-    return [column[0] for column in result]
+    result = [column[0] for column in result]
+    saveToCache("free-to-play", result)
+    return result
 
 @router.post("/games/free-to-play")
 def read_item(body: Body):

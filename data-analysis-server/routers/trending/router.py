@@ -24,7 +24,9 @@ def getTrending(number):
     # data[1] -> views
     # data[2] -> loves
     # data[3] -> buys number
-    return list(result[np.argsort(result[:, 1])][:number, 0])
+    result = list(result[np.argsort(result[:, 1])][:number, 0])
+    saveToCache('trending', result)
+    return result
 
 
 @router.post("/games/trending")

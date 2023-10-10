@@ -2,6 +2,7 @@ from pydantic import BaseModel
 from typing import Optional
 
 class Body(BaseModel):
+    uid: int = None
     start_index: Optional[int] = None
     number: int
 

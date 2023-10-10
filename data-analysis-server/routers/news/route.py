@@ -16,7 +16,9 @@ def getNews(number):
     """
 
     results = executeQuery(query=query)
-    return [result[0] for result in results]
+    results = [result[0] for result in results]
+    saveToCache("news", results)
+    return results
 
 
 

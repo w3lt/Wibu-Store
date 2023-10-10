@@ -4,7 +4,6 @@ import math
 import numpy as np
 
 from support import *
-from pydantic import BaseModel
 from routers.Body import Body
 
 router = APIRouter()
@@ -12,7 +11,7 @@ router = APIRouter()
 
 
 def getBestDealForYou(uid, number):
-    favorite_game_list_result = executeQuery(f"SELECT favorite_games FROM usertrackers WHERE uid={uid}")
+    favorite_game_list_result = executeQuery(f"SELECT favorite_games FROM usertrackers WHERE {True if uid is None else uid}")
     favorite_game_list = json.loads(favorite_game_list_result[0][0])
     datas = []
     for gameID in favorite_game_list:
@@ -68,15 +67,15 @@ def getBestDealForYou(uid, number):
     
     best_deal_points = sorted(best_deal_points, key=lambda x: x[1])
     
-    return [best_deal_point[0] for best_deal_point in best_deal_points[0:number]]
+    result = [best_deal_point[0] for best_deal_point in best_deal_points[0:number]]
+    saveToCache("best-deal-for-you", result)
+    return result
 
-class Body(BaseModel):
-    number: int
 
 @router.post("/games/best-deal-for-you")
 def read_item(body: Body):
     try:
-        bestDealForYou = getBestDealForYou(100000000, body.number)
+        bestDealForYou = getBestDealForYou(body.uid, body.number)
         return bestDealForYou
     except Exception as e:
         return {"error": str(e)}
