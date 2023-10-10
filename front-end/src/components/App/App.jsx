@@ -12,6 +12,7 @@ import LoginRegisterForm from '../Login-Register-Form/LoginRegisterForm';
 import Dashboard from '../Dashboard/Dashboard';
 import Game from '../Game/Game';
 import Checkout from '../Checkout/Checkout';
+import Header from '../Header/Header';
 
 
 const router = createBrowserRouter([
@@ -20,7 +21,7 @@ const router = createBrowserRouter([
     element: <LoginRegisterForm />
   },
   {
-    path: "/dashboard",
+    path: "/",
     element: <Dashboard />
   },
   {
@@ -34,7 +35,10 @@ const router = createBrowserRouter([
 ])
 
 function App() {
-  return <div className='App'><RouterProvider router={router} /></div>
+  return <div className='App'>
+    <Header />
+    <RouterProvider router={router} />
+  </div>
 }
 
 export default App;

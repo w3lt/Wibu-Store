@@ -31,11 +31,10 @@ CREATE TABLE topsellers_year (
     FOREIGN KEY (id) REFERENCES games(id)
 );
 
-SELECT *
-FROM usertrackers
-WHERE JSON_UNQUOTE(JSON_EXTRACT(game_history, '$[*].gameID')) IN (
-    SELECT id as gameID
-    FROM games
-    WHERE release_date >= DATE_SUB(CURDATE(), INTERVAL 100 DAY) + TIME('23:00:00') AND
-            release_date < CURDATE() - TIME('23:00:00')
+CREATE TABLE gametrackers (
+    id INT,
+    last30daysview INT NOT NULL,
+    last30dayslovenumber INT NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (id) REFERENCES games(id)
 );

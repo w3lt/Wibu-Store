@@ -39,6 +39,7 @@ CREATE TABLE games (
     release_date DATETIME NOT NULL,
     size DECIMAL(5, 2) NOT NULL,
     cover_img_url VARCHAR(255) NOT NULL,
+    thumbnail_url VARCHAR(255) NOT NULL,
     supported_platforms JSON NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (publisher) REFERENCES companies(id)
@@ -50,7 +51,6 @@ CREATE TABLE gameStoreRelatedIn4 (
     reviews JSON, -- {point: float, review: text}
     original_price DECIMAL(6, 2) NOT NULL,
     price DECIMAL(6, 2) NOT NULL,
-    background_img_url VARCHAR(255),
     PRIMARY KEY (id),
     FOREIGN KEY (id) REFERENCES games(id)
 );

@@ -4,13 +4,12 @@ const { Type } = require("../Type/Type");
 const { User } = require("../User/User");
 
 class Game {
-    // +++ ------ Meta data ------ +++ //
     // private fields
     #gameID;
     #condition;
     #tableName = 'games';
 
-    #metaDataFields = ["id", "title", "types", "developers", "publisher", "description", "release_date", "size", "cover_img"];
+    #metaDataFields = ["id", "title", "types", "developers", "publisher", "description", "release_date", "size", "cover_img", "thumbnail", "supported_platforms"];
     #storeRelatedDataFields = ["reviews", "original_price", "price", "background_img"];
 
     // constructor
@@ -20,23 +19,13 @@ class Game {
     }
 
 
-
+    // +++ ------ Meta data ------ +++ //
     // Game ID
     getGameID() {
         return this.#gameID;
     }
 
     // title
-    async getTitle() {
-        const getField = 'title';
-        try {
-            const result = await execGetQuery(this.#tableName, getField, this.#condition);
-            return result;
-        } catch (error) {
-            throw error;
-        }
-    }
-
     async setTitle(newTitle) {
         const setStatement = `title='${newTitle}'`;
         try {
@@ -48,16 +37,6 @@ class Game {
     }
 
     // types
-    async getTypes() {
-        const getField = 'types';
-        try {
-            const result = await execGetQuery(this.#tableName, getField, this.#condition);
-            return result.split(', ');
-        } catch (error) {
-            throw error;
-        }
-    }
-
     async setTypes(types) {
         var newTypes;
 
@@ -99,16 +78,6 @@ class Game {
     }
 
     // developers
-    async getDevelopers() {
-        const getField = 'developers';
-        try {
-            const result = await execGetQuery(this.#tableName, getField, this.#condition);
-            return result.split(', ');
-        } catch (error) {
-            throw error;
-        }
-    }
-
     async setDevelopers(developers) {
         var newDevelopers;
 
@@ -150,16 +119,6 @@ class Game {
     }
 
     // publisher
-    async getPublisher() {
-        const getField = 'publisher';
-        try {
-            const result = await execGetQuery(this.#tableName, getField, this.#condition);
-            return result;
-        } catch (error) {
-            throw error;
-        }
-    }
-
     async setPublisher(newPublisher) {
         const setStatement = `publisher='${newPublisher}'`;
         try {
@@ -171,16 +130,6 @@ class Game {
     }
 
     // description
-    async getDescription() {
-        const getField = 'description';
-        try {
-            const result = await execGetQuery(this.#tableName, getField, this.#condition);
-            return result;
-        } catch (error) {
-            throw error;
-        }
-    }
-
     async setDescription(newDescription) {
         const setStatement = `description='${newDescription}'`;
         try {
@@ -192,16 +141,6 @@ class Game {
     }
 
     // release date
-    async getReleaseDate() {
-        const getField = 'release_date';
-        try {
-            const result = await execGetQuery(this.#tableName, getField, this.#condition);
-            return result;
-        } catch (error) {
-            throw error;
-        }
-    }
-
     async setReleaseDate(newReleaseDate) {
         const setStatement = `release_date='${newReleaseDate}'`;
         try {
@@ -213,15 +152,11 @@ class Game {
     }
 
     async getCoverImage() {
-        const getField = 'cover_img_url';
-        try {
-            const result = await execGetQuery(this.#tableName, getField, this.#condition);
-            if (result.length !==0) {
-                return convertPath2IMG(`cover_imgs/${result[0].cover_img_url}`);
-            } else return null;
-        } catch (error) {
-            throw error;
-        }
+        return convertPath2IMG(`cover_imgs/game_${this.#gameID}.png`);
+    }
+
+    async getThumbnail() {
+        return convertPath2IMG(`thumbnails/game_${this.#gameID}.png`);
     }
 
     // meta data && store related information
@@ -234,7 +169,34 @@ class Game {
             throw error;
         }
     }
-
+    
+    async #getMetaData(getField) {
+        try {
+            let result;
+            if (["cover_img", "thumbnail"].includes(getField)) {
+                return convertPath2IMG(`${getField}s/game_${this.#gameID}.png`);
+            } else if (["types", "developers", "supported_platforms"].includes(getField)) {
+                result = await execGetQuery(this.#tableName, getField, this.#condition);
+                if (getField === "supported_platforms") {
+                    return strToJSON(result[0].supported_platforms);
+                } else if (getField === "developers") {
+                    return await Promise.all(strToJSON(result[0].developers).map(async id => {
+                        return await new Company(id).getName();
+                    }))
+                } else if (getField === "types") {
+                    return await Promise.all(strToJSON(result[0].types).map(async id => {
+                        return await new Type(id).getTitle();
+                    }))
+                }
+            } else {
+                result = await execGetQuery(this.#tableName, getField, this.#condition);
+                if (result.length !== 0) return result[0][getField];
+                else return null;
+            }
+        } catch (error) {
+            throw error;
+        }
+    }
     // +++ ------ Meta data ------ +++ //
     
 
@@ -278,16 +240,6 @@ class Game {
     }
 
     // reviews
-    async getReviews() {
-        const getField = 'reviews';
-        try {
-            const result = await this.#getStoreRelatedData(getField);
-            return result;
-        } catch (error) {
-            throw error;
-        }
-    }
-
     async setReviews(reviews) {
         const reviewsStr = JSON.stringify(reviews);
         const setStatement = `reviews=${reviewsStr}`;
@@ -324,16 +276,6 @@ class Game {
     }
 
     // original price
-    async getOriginalPrice() {
-        const getField = 'original_price';
-        try {
-            const result = await this.#getStoreRelatedData(getField);
-            return result;
-        } catch (error) {
-            throw error;
-        }
-    }
-
     async setOriginalPrice(newOriginalPrice) {
         const setStatement = `original_price=${newOriginalPrice}`;
         try {
@@ -344,20 +286,7 @@ class Game {
         }
     }
 
-    // price
-    async getPrice() {
-        const getField = 'price';
-        try {
-            const result = await this.#getStoreRelatedData(getField);
-            if (result !== null) return result;
-            else {
-                throw new Error("Game does not exists");
-            }
-        } catch (error) {
-            throw error;
-        }
-    }
-
+    // current price
     async setPrice(newPrice) {
         const setStatement = `price=${newPrice}`;
         try {
@@ -426,22 +355,6 @@ class Game {
 
 
             return totalAmount;
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    async #getMetaData(getField) {
-        try {
-            let result;
-            if (getField === "cover_img") {
-                result = await this.getCoverImage();
-                return result;
-            } else {
-                result = await execGetQuery(this.#tableName, getField, this.#condition);
-                if (result.length !== 0) return result[0][getField];
-                else return null;
-            }
         } catch (error) {
             throw error;
         }

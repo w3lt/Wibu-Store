@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
 from support import *
-from pydantic import BaseModel
+from routers.Body import Body
 
 router = APIRouter()
 
@@ -16,9 +16,6 @@ def getFreeToPlay(number):
     """
     result = executeQuery(query=query)
     return [column[0] for column in result]
-
-class Body(BaseModel):
-    number: int
 
 @router.post("/games/free-to-play")
 def read_item(body: Body):

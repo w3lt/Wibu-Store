@@ -159,11 +159,11 @@ async function getTopBanners() {
     }
 }
 
-async function getDatas(dataType) {
+async function getDatas(dataType, number=5, start_index=0) {
     const route = `/datas/${dataType}`;
     const method = "POST";
     try {
-        const result = await execRequest(route, method, {number: 5});
+        const result = await execRequest(route, method, {number: number, start_index: start_index});
         if (result.id === 0) return result.data;
         else console.log(result.msg);
     } catch (error) {
@@ -171,5 +171,9 @@ async function getDatas(dataType) {
     }
 }
 
+function displayPrice(price) {
+    return (price === 0 ? "Free" : `$${price}`)
+}
+
 export {checkSession, login, register, logout, execRequest, fetchGameInfor, fetchUserInfor,
-        getTopBanners, getDatas};
+        getTopBanners, getDatas, displayPrice};

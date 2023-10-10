@@ -36,11 +36,6 @@ const Game = () => {
 
     const [gameInfor, setGameInfor] = useState(null);
 
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [avatar, setAvatar] = useState(null);
-
-    const [isBigEnough, setIsBigEnough] = useState(true);
-
     const { gameID } = useParams();
 
     const [pointStars, setPointStars] = useState([Array(5).fill(0)]);
@@ -48,14 +43,6 @@ const Game = () => {
     const [currentTab, setCurrentTab] = useState(0);
 
     const [isPaying, setIsPaying] = useState(false);
-
-    function handleResize() {
-        if (window.innerWidth < 0.7 * window.screen.width) {
-            setIsBigEnough(false);
-        } else {
-            setIsBigEnough(true);
-        }
-    }
 
     function handleOtherButtonHover(id) {
         setIsHoveringOtherBtn(id);
@@ -82,14 +69,6 @@ const Game = () => {
                     else if (point - Math.floor(point) > 0.7) points[Math.floor(point)] = 1;
                     setPointStars(points);
 
-                    // check session
-                    const session = await checkSession();
-                    if (session.result) {
-                        setAvatar(await fetchUserInfor(session.uid, "avatar"));
-                        
-                        setIsLoggedIn(true);
-                    }
-
                     setIsLoading(false);
                 }
             } catch (error) {
@@ -97,8 +76,6 @@ const Game = () => {
             }
         }) ();
     })
-    
-    window.addEventListener('resize', handleResize);
 
     
     
@@ -106,8 +83,6 @@ const Game = () => {
     else return (
         <div className="Game">
             
-            <Header avatar={avatar} isLoggedIn={isLoggedIn} isBigEnough={isBigEnough} />
-
             <div className="main-content-container">
                 <div className="data-container">
                     <div className="background-img">
@@ -161,7 +136,7 @@ const Game = () => {
                 </div>
 
                 <div className="actions">
-                    <div className="buy-btn" onClick={() => {if (isLoggedIn) setIsPaying(true); else navigate("/login") ;}}>
+                    <div className="buy-btn" onClick={async () => {if ((await checkSession()).result) setIsPaying(true); else navigate("/login") ;}}>
                         <div style={{fontWeight: "600"}}>Buy</div>
                         <div>${gameInfor.price}</div>
                     </div>

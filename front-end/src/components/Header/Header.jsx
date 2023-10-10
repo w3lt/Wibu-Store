@@ -1,13 +1,33 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import "./Header.css";
 
 import logo from "../../assets/logo.png";
 import cartBtnSymbol from "../../assets/cart_button.png";
 import cartBtnHoverSymbol from "../../assets/cart_button_hover.png";
-import { logout } from "../../support";
+import { checkSession, fetchUserInfor, logout } from "../../support";
 
-export default function Header({ avatar, isLoggedIn, isBigEnough}) {
+export default function Header() {
+    const [avatar, setAvatar] = useState(null);
+    const [isLoggedIn, setIsLoggedIn] = useState(null);
+    const [isBigEnough, setIsBigEnough] = useState(true);
+
+    useEffect(() => {
+        (async () => {
+            const session = await checkSession();
+            if (session.result) {
+                setAvatar(await fetchUserInfor(session.uid, "avatar"));
+                setIsLoggedIn(true);
+            }
+        }) ();
+        window.addEventListener('resize', () => {
+            if (window.innerWidth < 0.7 * window.screen.width) {
+                setIsBigEnough(false);
+            } else {
+                setIsBigEnough(true);
+            }
+        })
+    })
 
     const [isHoveringCartBtn, setIsHoveringCartBtn] = useState(false);
     const headerCategories = ["Latest", "Genre", "Collection", "Deal"];
