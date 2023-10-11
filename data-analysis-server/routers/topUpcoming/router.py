@@ -28,7 +28,7 @@ def getTrending(number):
     # # data[1] -> buy number
     # # data[2] -> view number
     result = list(data[np.argsort(data[:, 1])][:number, 0])
-    saveToCache('top-upcoming')
+    # saveToCache('top-upcoming')
     return result
 
 

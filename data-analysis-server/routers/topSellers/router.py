@@ -15,7 +15,7 @@ def getTopSellers(period, start_index, count):
     """
     result = executeQuery(query=query)
     result = [column[0] for column in result]
-    saveToCache('top-seller', result)
+    # saveToCache('top-seller', result)
     return result
 
 @router.post("/games/top-seller/{subfield}")

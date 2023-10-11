@@ -4,7 +4,7 @@ const session = require('express-session');
 const bodyParser = require('body-parser');
 const fs = require('fs').promises;
 const MySQLStore = require('express-mysql-session')(session);
-const { getDataFromCache } = require('./support');
+const Cache = require('./cache').Cache;
 
 const passport = require('passport');
 const { sqlPool, convertPath2IMG } = require('./support');
@@ -224,41 +224,43 @@ app.route('/datas/:field/:subfield?')
         const field = req.params.field;
         const number = req.body.number;
 
-        var cacheData; 
+        const cache = new Cache(`redis://${config.cacheURL}`);
+
         try {
-            cacheData = await getDataFromCache(field);
+            const cacheData = await cache.getData(field);
+            if (cacheData) {
+                console.log(cacheData);
+                res.send(new Response(0, 0, cacheData).toJSON());
+                return;
+            }
         } catch (error) {
-            console.log("Redis error: ", error);
+            console.log(error);
         }
+        
+
+        var targetData;
 
         switch (field) {
             case "best-deal-for-you":
                 try {
-                    var bestDealForYouIDs;
-                    if (cacheData.length === 0) {
-                        const uid = req.session.uid;
-                        const response = await fetch(`${basePoint}/games/${field}`, {
-                            method: "POST",
-                            headers: {'Content-Type': 'application/json'},
-                            body: JSON.stringify(uid === undefined ? {number: number} : {uid: uid, number: number})
-                        });
+                    const uid = req.session.uid;
+                    const response = await fetch(`${basePoint}/games/${field}`, {
+                        method: "POST",
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify(uid === undefined ? {number: number} : {uid: uid, number: number})
+                    });
 
-                        bestDealForYouIDs = await response.json();
-                        if (bestDealForYouIDs["error"]) {
-                            console.log(bestDealForYouIDs["error"]);
-                            res.send(new Response(1).toJSON());
-                            return;
-                        }
+                    const bestDealForYouIDs = await response.json();
+                    if (bestDealForYouIDs["error"]) {
+                        console.log(bestDealForYouIDs["error"]);
+                        res.send(new Response(1).toJSON());
                     } else {
-                        bestDealForYouIDs = cacheData
+                        targetData = await Promise.all(bestDealForYouIDs.map(async gameID => {
+                            const data = await (new Game(gameID)).get("id", "cover_img", "title", "original_price", "price");
+                            return data;
+                        }));
+                        res.send(new Response(0, 0, targetData).toJSON());
                     }
-
-                    const bestDealForYouGameInfor = await Promise.all(bestDealForYouIDs.map(async gameID => {
-                        const data = await (new Game(gameID)).get("id", "cover_img", "title", "original_price", "price");
-                        return data;
-                    }));
-                    res.send(new Response(0, 0, bestDealForYouGameInfor).toJSON());
-                    
                 } catch (error) {
                     console.log(error);
                     res.send(new Response(1).toJSON());
@@ -282,11 +284,11 @@ app.route('/datas/:field/:subfield?')
                         console.log(topSellerIDs);
                         res.send(new Response(1).toJSON());
                     } else {
-                        const topSellerInfor = await Promise.all(topSellerIDs.map(async topSellerID => {
+                        targetData = await Promise.all(topSellerIDs.map(async topSellerID => {
                             const data = await (new Game(topSellerID)).get("id", "thumbnail", "supported_platforms", "title", "types", "price");
                             return data;
                         }));
-                        res.send(new Response(0, 0, topSellerInfor).toJSON());
+                        res.send(new Response(0, 0, targetData).toJSON());
                     }
                 } catch (error) {
                     console.log(error);
@@ -296,29 +298,24 @@ app.route('/datas/:field/:subfield?')
                 }
             case 'free-to-play':
                 try {
-                    var freeToPlayIDs;
-                    if (cacheData.length === 0) {
-                        const response = await fetch(`${basePoint}/games/${field}`, {
-                            method: "POST",
-                            headers: {'Content-Type': 'application/json'},
-                            body: JSON.stringify({number: number})
-                        });
-        
-                        freeToPlayIDs = await response.json();
-                        if (freeToPlayIDs["error"]) {
-                            console.log(freeToPlayIDs["error"]);
-                            res.send(new Response(1).toJSON());
-                        }
+                    const response = await fetch(`${basePoint}/games/${field}`, {
+                        method: "POST",
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({number: number})
+                    });
+    
+                    const freeToPlayIDs = await response.json();
+                    if (freeToPlayIDs["error"]) {
+                        console.log(freeToPlayIDs["error"]);
+                        res.send(new Response(1).toJSON());
                     } else {
-                        freeToPlayIDs = cacheData;
+                        targetData = await Promise.all(freeToPlayIDs.map(async freeToPlayID => {
+                            const data = await (new Game(freeToPlayID)).get("id", "cover_img", "title");
+                            return data;
+                        }));
+
+                        res.send(new Response(0, 0, targetData).toJSON());
                     }
-
-                    const freeToPlayInfor = await Promise.all(freeToPlayIDs.map(async freeToPlayID => {
-                        const data = await (new Game(freeToPlayID)).get("id", "cover_img", "title");
-                        return data;
-                    }));
-
-                    res.send(new Response(0, 0, freeToPlayInfor).toJSON());
                 } catch (error) {
                     console.log(error);
                     res.send(new Response(1).toJSON()); 
@@ -328,37 +325,38 @@ app.route('/datas/:field/:subfield?')
 
             default:
                 try {
-                    var targetGameIDs;
+                    const response = await fetch(`${basePoint}/games/${field}`, {
+                        method: "POST",
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({number: number})
+                    });
 
-                    if (cacheData.length === 0) {
-                        const response = await fetch(`${basePoint}/games/${field}`, {
-                            method: "POST",
-                            headers: {'Content-Type': 'application/json'},
-                            body: JSON.stringify({number: number})
-                        });
-    
-                        targetGameIDs = await response.json();
-                        
-                        if (targetGameIDs["error"]) {
-                            console.log(targetGameIDs["error"]);
-                        }
+                    const targetGameIDs = await response.json();
+                    
+                    if (targetGameIDs["error"]) {
+                        console.log(targetGameIDs["error"]);
                     } else {
-                        targetGameIDs = cacheData;
+                        targetData = await Promise.all(targetGameIDs.map(async gameID => {
+                            const data = await (new Game(gameID)).get("id", "thumbnail", "supported_platforms", "title", "types", "price");
+                            return data;
+                        }))
+
+                        res.send(new Response(0, 0, targetData).toJSON());
                     }
-
-                    const targetGameInfo = await Promise.all(targetGameIDs.map(async gameID => {
-                        const data = await (new Game(gameID)).get("id", "thumbnail", "supported_platforms", "title", "types", "price");
-                        return data;
-                    }))
-
-                    res.send(new Response(0, 0, targetGameInfo).toJSON());
                 } catch (error) {
                     console.log(error);
                     res.send(new Response(1).toJSON()); 
                 } finally {
                     break;
-                }                
+                }
         }
+
+        try {
+            await cache.setData(field, targetData);
+        } catch (error) {
+            console.log("Error setting data redis: ", error);
+        }
+        
     })
 
 app.route('/top-banners')

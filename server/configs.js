@@ -25,3 +25,6 @@ exports.DATA_ANALYSIS_SERVER_PORT = DATA_ANALYSIS_SERVER_PORT;
 // port
 const PORT = 12345;
 exports.PORT = PORT;
+
+const cacheURL = "redis"
+exports.cacheURL = cacheURL;

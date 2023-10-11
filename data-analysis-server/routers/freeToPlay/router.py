@@ -16,7 +16,7 @@ def getFreeToPlay(number):
     """
     result = executeQuery(query=query)
     result = [column[0] for column in result]
-    saveToCache("free-to-play", result)
+    # saveToCache("free-to-play", result)
     return result
 
 @router.post("/games/free-to-play")
