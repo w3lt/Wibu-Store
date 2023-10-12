@@ -10,6 +10,7 @@ const passport = require('passport');
 const { sqlPool, convertPath2IMG } = require('./support');
 const { Response } = require('./response');
 const { Game } = require('./structure/Game/Game');
+const { SearchClient } = require('./search');
 const LocalStrategy = require('passport-local').Strategy;
 
 const stripe = require("stripe")('sk_test_51NsNMwJqOqW5UsDeG7q0qN1nEyj6BhcTYcyaNzXXQhtBM86S0CJ2zCs9lzuY6gEHKfmlLAmkx3VSn4fJk3Tsz29L00nOQTJunp');
@@ -229,7 +230,6 @@ app.route('/datas/:field/:subfield?')
         try {
             const cacheData = await cache.getData(field);
             if (cacheData) {
-                console.log(cacheData);
                 res.send(new Response(0, 0, cacheData).toJSON());
                 return;
             }
@@ -373,6 +373,28 @@ app.route('/top-banners')
         } catch (error) {
             console.log(error);
             res.send(new Response(1).toJSON());
+        }
+    });
+
+app.route('/search')
+    .post(async (req, res) => {
+        const keyword = req.body.keyword;
+        if (!keyword) {
+            res.send(new Response(0, 0, null));
+        } else {
+            const searchClient = new SearchClient();
+            try {
+                const results = await searchClient.search(keyword);
+                const datas = await Promise.all(results.map(async result => {
+                    const gameID = result.id;
+                    return await (new Game(gameID)).get("id", "cover_img", "title", "supported_platforms", "price");
+                }));
+
+                res.send(new Response(0, 0, datas).toJSON());
+            } catch (error) {
+                console.log(error);
+                res.send(new Response(1).toJSON());
+            }
         }
     })
 

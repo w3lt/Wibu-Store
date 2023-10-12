@@ -50,6 +50,22 @@ services:
       - mysql
       - server
 
+  search-engine:
+    build:
+      context: ./search-engine
+      dockerfile: Dockerfile
+    volumes:
+      - ./search-engine:/search-engine
+    networks:
+      - my-network
+    depends_on:
+      - mysql
+    environment:
+      - MYSQL_HOST=mysql
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=my-secret-password
+      - MYSQL_DATABASE=WibuStore
+
   redis:
     image: redis
     networks:

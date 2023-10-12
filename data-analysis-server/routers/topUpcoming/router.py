@@ -27,9 +27,8 @@ def getTrending(number):
     data = np.concatenate([data[:, 0].reshape(-1, 1), result.reshape(-1, 1)], axis=1)
     # # data[1] -> buy number
     # # data[2] -> view number
-    result = list(data[np.argsort(data[:, 1])][:number, 0])
+    return list(data[np.argsort(data[:, 1])][:number, 0])
     # saveToCache('top-upcoming')
-    return result
 
 
 @router.post("/games/top-upcoming")

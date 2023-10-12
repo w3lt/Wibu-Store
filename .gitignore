@@ -4,3 +4,4 @@ project_work_daily.txt
 **/__pycache__
 **/.DS_Store
 server/assets/*
+**/nodemon.json

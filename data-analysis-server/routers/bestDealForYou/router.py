@@ -67,9 +67,8 @@ def getBestDealForYou(uid, number):
     
     best_deal_points = sorted(best_deal_points, key=lambda x: x[1])
     
-    result = [best_deal_point[0] for best_deal_point in best_deal_points[0:number]]
+    return [best_deal_point[0] for best_deal_point in best_deal_points[0:number]]
     # saveToCache("best-deal-for-you", result)
-    return result
 
 
 @router.post("/games/best-deal-for-you")

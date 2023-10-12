@@ -14,9 +14,8 @@ def getTopSellers(period, start_index, count):
         LIMIT {count} OFFSET {start_index};
     """
     result = executeQuery(query=query)
-    result = [column[0] for column in result]
+    return [column[0] for column in result]
     # saveToCache('top-seller', result)
-    return result
 
 @router.post("/games/top-seller/{subfield}")
 def read_item(body: Body, subfield: str):

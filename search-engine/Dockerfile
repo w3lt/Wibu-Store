@@ -1,10 +1,12 @@
-FROM python
+FROM node:18-alpine
 
 WORKDIR /search-engine
 
-COPY requirements.txt .
-RUN pip3 install -r requirements.txt
+COPY *.json ./
+
+RUN npm install
+RUN npm install -g nodemon
+RUN npm install -g ts-node
+
 COPY . .
-
-
-CMD ["python", "app.py"]
+CMD [ "nodemon" ]

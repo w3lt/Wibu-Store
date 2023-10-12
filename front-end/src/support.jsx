@@ -171,9 +171,22 @@ async function getDatas(dataType, number=5, start_index=0) {
     }
 }
 
+async function search(keyword) {
+    const route = "/search";
+    const method = "POST";
+    try {
+        const result = await execRequest(route, method, {keyword: keyword});
+        console.log(result);
+        if (result.id === 0) return result.data;
+        else console.log(result.msg);
+    } catch (error) {
+        throw error;
+    }
+}
+
 function displayPrice(price) {
     return (price === 0 ? "Free" : `$${price}`)
 }
 
 export {checkSession, login, register, logout, execRequest, fetchGameInfor, fetchUserInfor,
-        getTopBanners, getDatas, displayPrice};
+        getTopBanners, getDatas, displayPrice, search};

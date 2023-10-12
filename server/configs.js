@@ -28,3 +28,6 @@ exports.PORT = PORT;
 
 const cacheURL = "redis"
 exports.cacheURL = cacheURL;
+
+const searchServerURL = "http://search-engine";
+exports.searchServerURL = searchServerURL;
