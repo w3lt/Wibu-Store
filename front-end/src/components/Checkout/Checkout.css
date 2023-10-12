@@ -1,7 +1,7 @@
 .checkout {
     display: flex;
-    margin-right: 10px;
-    width: 70%;
+    /* margin-right: 10px; */
+    width: 100%;
 }
 
 #payment-form {

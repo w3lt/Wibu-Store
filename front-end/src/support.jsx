@@ -123,11 +123,11 @@ async function logout() {
     }
 }
 
-async function fetchGameInfor(gameID) {
+async function fetchGameInfor(gameID, getField) {
     const route = `/games/${gameID}`;
-    const method = "GET";
+    const method = "POST";
     try {
-        const result = await execRequest(route, method);
+        const result = await execRequest(route, method, {getField: getField});
         if (result.id === 0) return result.data;
         else console.log(result.msg);
     } catch (error) {

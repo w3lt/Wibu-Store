@@ -173,7 +173,7 @@
     width: 30px;
 }
 
-.is-paying {
+.Game .is-paying {
     display: flex;
     position: absolute;
     top: 0;
@@ -190,7 +190,7 @@
     display: flex;
     position: absolute;
     top: 30%;
-    right: 29.8%;
+    right: 29.2%;
     z-index: 6;
     /* width: 10px;
     height: 10px; */

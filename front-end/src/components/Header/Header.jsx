@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import Cookies from "js-cookie";
 
 import "./Header.css";
 
@@ -9,6 +10,7 @@ import searchSymbol from "../../assets/search-icon.png";
 import windowsLogo from "../../assets/windows_logo.png";
 import macOSLogo from "../../assets/macos_logo.png";
 import { checkSession, displayPrice, fetchUserInfor, logout, search } from "../../support";
+import { CookiesContext } from "../../context/Cookies";
 
 export default function Header() {
     const [avatar, setAvatar] = useState(null);
@@ -18,7 +20,17 @@ export default function Header() {
     const [searchBarText, setSearchBarText] = useState('');
     const [searchResults, setSearchResults] = useState(null);
 
+    const [cookies] = useContext(CookiesContext);
+
+    const [cartNumber, setCartNumber] = useState(0);
+
     useEffect(() => {
+        var cartNumber = 0;
+        for (var item in cookies) {
+            cartNumber += cookies[item];
+        }
+        setCartNumber(cartNumber);
+
         (async () => {
             const session = await checkSession();
             if (session.result) {
@@ -41,8 +53,9 @@ export default function Header() {
     return (
         <div className="header-container">
             {isBigEnough ? 
-                <div className="store-logo">Wibu <img src={logo} alt="" className="logo" /> Store</div>: 
-                <div className="store-logo"><img src={logo} alt="" className="logo" /></div>}
+                <div className="store-logo" onClick={() => {window.location.href = "/"}}>Wibu <img src={logo} alt="" className="logo" /> Store</div>: 
+                <div className="store-logo" onClick={() => {window.location.href = "/"}}><img src={logo} alt="" className="logo" /></div>
+            }
 
             <div className="header-categories-container">
                 {headerCategories.map((category, index) => (
@@ -55,7 +68,7 @@ export default function Header() {
                     <input type="text"
                         placeholder="Search"
                         value={searchBarText}
-                        onChange={e => setSearchBarText(e.target.value)}
+                        onChange={e => {setSearchBarText(e.target.value); if (e.target.value.length === 0) setSearchResults(null);}}
                     />
                     <img src={searchSymbol} alt="" onClick={async () => {setSearchResults(await search(searchBarText))}} />
                 </div>
@@ -86,8 +99,12 @@ export default function Header() {
 
             <div className="cart"
                 onMouseEnter={() => {setIsHoveringCartBtn(true)}}
-                onMouseLeave={() => {setIsHoveringCartBtn(false)}}>
+                onMouseLeave={() => {setIsHoveringCartBtn(false)}}
+                onClick={() => {window.location.href = "/cart"}}>
                 {isHoveringCartBtn ? <img src={cartBtnHoverSymbol} alt="cart" /> : <img src={cartBtnSymbol} alt="cart" />}
+                <div className="cart-number">
+                    {cartNumber !== 0 && cartNumber}
+                </div>
             </div>
 
             {isLoggedIn ? 

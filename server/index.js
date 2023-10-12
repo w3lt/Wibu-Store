@@ -154,12 +154,19 @@ app.route('/logout')
     });
 
 app.route('/games/:gameID')
-    .get(async (req, res) => {
+    .post(async (req, res) => {
         const gameID = req.params.gameID;
+        const getField = req.body.getField;
 
         try {
             const game = new Game(gameID);
-            const gameData = await game.getFullData();
+            var gameData;
+            if (!getField) {    
+                gameData = await game.getFullData();
+            } else {
+                gameData = await game.get(...getField);
+            }
+
             res.send(new Response(0, 0, gameData).toJSON());
         } catch (error) {
             console.error(error);
@@ -192,6 +199,8 @@ app.route("/create-payment-intent")
 
         try {
             const totalAmount = Math.round(await Game.calculateOrderAmount(itemIDs) * 100);
+
+            // console.log(totalAmount);
         
             // Create a PaymentIntent with the order amount and currency
             const paymentIntent = await stripe.paymentIntents.create({

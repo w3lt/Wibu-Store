@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { createContext, useEffect, useState } from 'react';
 import {
   createBrowserRouter,
   RouterProvider,
@@ -13,6 +13,10 @@ import Dashboard from '../Dashboard/Dashboard';
 import Game from '../Game/Game';
 import Checkout from '../Checkout/Checkout';
 import Header from '../Header/Header';
+import Cookies from 'js-cookie';
+import { CookiesContext } from '../../context/Cookies';
+import MyCart from '../MyCart/MyCart';
+
 
 
 const router = createBrowserRouter([
@@ -31,14 +35,26 @@ const router = createBrowserRouter([
   {
     path: "/checkout",
     element: <Checkout />
+  },
+  {
+    path: "/cart",
+    element: <MyCart />
   }
 ])
 
 function App() {
-  return <div className='App'>
-    <Header />
-    <RouterProvider router={router} />
-  </div>
+  const [cookies, setCookies] = useState(JSON.parse(Cookies.get('cart') || "{}"));
+  const updateCookies = (newValue) => {
+    Cookies.set('cart', JSON.stringify(newValue));
+    setCookies(newValue);
+  }
+  return <CookiesContext.Provider value={[cookies, updateCookies]}>
+    <div className='App'>
+      <Header />
+      <RouterProvider router={router} />
+    </div>
+  </CookiesContext.Provider>
+  
 }
 
 export default App;

@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import Cookies from "js-cookie";
 
 import { useNavigate, useParams } from "react-router-dom";
 
 import "./Game.css";
-import { checkSession, fetchGameInfor, fetchUserInfor, logout } from "../../support";
+import { checkSession, fetchGameInfor } from "../../support";
 
 
 import Loading from "../Loading/Loading";
@@ -24,7 +25,7 @@ import Reviews from "./Reviews/Reviews";
 import Checkout from "../Checkout/Checkout";
 
 import closeSymbol from "../../assets/close-icon.png";
-import Header from "../Header/Header";
+import { CookiesContext } from "../../context/Cookies";
 
 const Game = () => {
 
@@ -44,6 +45,8 @@ const Game = () => {
 
     const [isPaying, setIsPaying] = useState(false);
 
+    const [cookies, updateCookies] = useContext(CookiesContext);
+
     function handleOtherButtonHover(id) {
         setIsHoveringOtherBtn(id);
     }
@@ -52,13 +55,18 @@ const Game = () => {
         setIsHoveringOtherBtn(-1);
     }
 
+    function addToCart(gameID) {
+        const cookiesValue = JSON.parse(Cookies.get('cart') || "{}");
+        cookiesValue[gameID] = (cookiesValue[gameID] || 0) + 1;
+        updateCookies(cookiesValue);
+    }
+
     useEffect(() => {
         (async () => {
             try {
                 if (isLoading) {
                     // Load data
                     setGameInfor(await fetchGameInfor(gameID));
-                    console.log(gameInfor);
                     const point = gameInfor.avg_point;
                     const points = Array(5).fill(0);
                     for (let i=0; i<Math.floor(point); i++) {
@@ -146,7 +154,8 @@ const Game = () => {
                     <div style={{display: "flex"}} className="other-btns">
                         <div id="cart-btn" 
                             onMouseEnter={() => {handleOtherButtonHover(0)}}
-                            onMouseLeave={handleOtherButtonLeave}>
+                            onMouseLeave={handleOtherButtonLeave}
+                            onClick={() => {addToCart(gameID)}}>
                             {(isHoveringOtherBtn === 0) ? <img src={cartHoverSymbol} alt="" /> : <img src={cartSymbol} alt="" />}
                         </div>
                         <div id="gift-btn"
@@ -188,12 +197,13 @@ const Game = () => {
                         backgroundColor: "white",
                         alignItems: "center",
                         justifyContent: "center",
-                        borderRadius: "10px"
+                        borderRadius: "10px",
+                        padding: "0 10px"
                     }}>
                     <div className="close-btn" onClick={() => {setIsPaying(false)}}>
                         <img src={closeSymbol} alt="" />
                     </div>
-                    <Checkout gameInfor={gameInfor} />
+                    <Checkout gameIDs={[gameInfor.id]} />
                     <div className="order-summary">
                         <div className="order-summary-title">Order Summary</div>
                         <div className="order-summary-cover-img">

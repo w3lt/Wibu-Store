@@ -341,10 +341,11 @@ class Game {
     static async calculateOrderAmount(itemIDs) {
         try {
             const prices = await Promise.all(itemIDs.map(async (currentID) => {
-                const currentAmount = await new Game(currentID).getPrice();
-                return currentAmount;
+                const currentAmount = await new Game(currentID).get("price");
+                return currentAmount.price;
             }));
     
+            // console.log(prices);
 
             
             // Sum the prices using reduce

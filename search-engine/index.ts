@@ -1,4 +1,4 @@
-import express, {Request, Response} from "express";
+import express from "express";
 import { PORT } from "./configs";
 import bodyParser from "body-parser";
 import { MyResponse } from "./response";
@@ -13,15 +13,14 @@ app.use(bodyParser.urlencoded({ extended: false }));
 const search = new Search();
 
 app.route('/')
-    .post(async (req, res) => {
-        console.log(req.body);
-        
+    .post(async (req, res) => {        
         const keyword = req.body.keyword;
+        const type = req.body.type;
         
         if (!keyword) res.send(new MyResponse(0, 'error', "null keyword!"));
         else {
             try {
-                const result = await search.searchOnGame(keyword);
+                const result = await search.search(keyword, type);
                 res.send(new MyResponse(0, 'data', result));
             } catch (error) {
                 console.log(error);

@@ -24,6 +24,30 @@ class Search {
         })
     }
 
+    public async search(keyword: string, type: "user" | "game" | "genre") {
+        if (type) {
+            switch (type) {
+                case "user":
+                    return await this.searchOnUser(keyword);
+            }
+        } else {
+            return await this.searchOnGame(keyword);
+        }
+    }
+
+    public async searchOnUser(keyword: string) {
+        const query = `
+            SELECT uid FROM users
+            WHERE MATCH(email, username) AGAINST('${keyword}' IN BOOLEAN MODE);
+        `;
+        try {
+            const result = await this.execQuerty(query);
+            return result;
+        } catch (error) {
+            throw error;
+        }
+    }
+
     public async searchOnGame(keyword: string) {
         const query = `
             SELECT id FROM games
@@ -34,8 +58,7 @@ class Search {
             return result;
         } catch (error) {
             throw error;
-        }
-        
+        }   
     }
 }
 

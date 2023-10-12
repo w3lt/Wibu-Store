@@ -1,0 +1,149 @@
+.my-cart {
+    display: flex;
+    position: absolute;
+    left: 0;
+    top: 52px;
+    width: 100%;
+    color: white;
+}
+
+.my-cart .title {
+    margin-top: 80px;
+}
+
+.my-cart-content {
+    display: flex;
+    flex-direction: row;
+}
+
+.items {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+}
+
+.items > .item {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    margin: 10px 0;
+}
+
+.items > .item .thumbnail {
+    width: 50%;
+    aspect-ratio: 1280 / 720;
+    height: auto;
+}
+
+.items > .item .thumbnail img {
+    width: 100%;
+    height: 100%;
+}
+
+.items > .item .info {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+    margin-left: 10px;
+}
+
+.items > .item .info .supported-platforms {
+    display: flex;
+    flex-direction: row;
+}
+
+.items > .item .info .supported-platforms .platform-logo {
+    width: 32px;
+    aspect-ratio: 1 / 1;
+    height: auto;
+    margin-right: 10px;
+}
+
+.items > .item .info .supported-platforms .platform-logo img {
+    width: 100%;
+    height: 100%;
+}
+
+.total-bill {
+    display: flex;
+    flex-direction: column;
+    margin-left: 50px;
+    width: 25%;
+    font-size: 1.2rem;
+    margin-top: 50px;
+}
+
+.total-bill .bill-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.total-bill > div {
+    display: flex;
+    margin: 3px 0;
+}
+
+.total-bill > div:not(:last-child) > span {
+    margin-left: auto;
+}
+
+.purchase-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #395B64;
+    height: 50px;
+    width: 100%;
+    font-weight: 600;
+    border-radius: 50px;
+    margin-top: 10px !important;
+    user-select: none;
+}
+
+.purchase-btn:hover {
+    cursor: pointer;
+}
+
+.purchase-as-gift {
+    display: flex;
+    justify-content: center;
+}
+
+.purchase-as-gift > span {
+    margin: 0 3px;
+}
+
+.purchase-as-gift > span:last-child {
+    cursor: pointer;
+    color: aqua;
+}
+
+.my-cart .is-paying {
+    display: flex;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100ch;
+    z-index: 5;
+    background-color: rgba(0, 0, 0, 0.5);
+    align-items: center;
+    justify-content: center;
+}
+
+.my-cart .is-paying .pay-bill {
+    flex-grow: 1;
+}
+
+.my-cart .is-paying .pay-bill > div {
+    display: flex;
+    margin: 5px 0;
+}
+
+.my-cart .is-paying .pay-bill > div > span:first-child {
+    font-weight: 600;
+}
+
+.my-cart .is-paying .pay-bill > div > span:last-child {
+    margin-left: auto;
+}

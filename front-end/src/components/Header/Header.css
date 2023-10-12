@@ -187,6 +187,20 @@
 .cart {
     margin-right: 20px;
     margin-left: 10px;
+    position: relative;
+}
+
+.cart .cart-number {
+    background-color: #648280;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    right: -10px;
+    top: -5px;
 }
 
 .cart img {
@@ -225,7 +239,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-right: 10px;
+    margin-right: 20px;
 }
 
 .avatar {

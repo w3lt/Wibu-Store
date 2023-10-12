@@ -100,7 +100,8 @@ function CheckoutForm() {
 // This is your test publishable API key.
 const stripePromise = loadStripe("pk_test_51NsNMwJqOqW5UsDeY4l4UeBtEMW1Cz7fUnr5Uk0FloPFFGKAmWs7x3OYeQciF55V3qUzfnICFxQOmWlrh1g21QWx00R8Mc5pHQ");
 
-export default function Checkout({ gameInfor }) {
+export default function Checkout({ gameIDs }) {
+    console.log(gameIDs);
 
     // const [orderSummary, setOrderSummary] = useState([]);
 
@@ -109,7 +110,7 @@ export default function Checkout({ gameInfor }) {
     useEffect(() => {
         (async () => {
             // Create PaymentIntent as soon as the page loads
-            const response = await execRequest("/create-payment-intent", "POST", {itemIDs: [gameInfor.id] || [102, 203, 301]});
+            const response = await execRequest("/create-payment-intent", "POST", {itemIDs: gameIDs});
             if (response.id === 0) {
                 setClientSecret(response.data.clientSecret);
             } else {
