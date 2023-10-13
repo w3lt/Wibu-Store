@@ -69,7 +69,7 @@
     margin-right: 10px;
 }
 
-.search-bar {
+.header-container .search-bar {
     display: flex;
     border: solid 1px #9DB2BF;
     border-radius: 10px;
@@ -78,7 +78,7 @@
     align-items: center;
 }
 
-.search-bar input {
+.header-container .search-bar input {
     height: 25px;
     display: flex;
     flex-grow: 1;
@@ -91,7 +91,7 @@
     font-size: 1rem;
 }
 
-.search-bar img {
+.header-container .search-bar img {
     width: 16px;
     height: 16px;
     margin-right: 6px;
@@ -176,11 +176,11 @@
     height: 100%;
 }
 
-.search-bar input::placeholder {
+.header-container .search-bar input::placeholder {
     color: #9DB2BF;
 }
 
-.search-bar img:hover {
+.header-container .search-bar img:hover {
     cursor: pointer;
 }
 

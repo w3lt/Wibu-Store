@@ -8,6 +8,7 @@ CREATE TABLE users (
     gender TINYINT,
     dob DATETIME,
     created_at DATETIME NOT NULL,
+    type TINYINT DEFAULT 0,
     PRIMARY KEY (uid),
     UNIQUE (email),
     UNIQUE (password)

@@ -24,25 +24,19 @@ class Search {
         })
     }
 
-    public async search(keyword: string, type: "user" | "game" | "genre") {
-        if (type) {
-            switch (type) {
-                case "user":
-                    return await this.searchOnUser(keyword);
-            }
-        } else {
-            return await this.searchOnGame(keyword);
-        }
+    public async search(keyword: string) {
+        return await this.searchOnGame(keyword);
     }
 
     public async searchOnUser(keyword: string) {
         const query = `
             SELECT uid FROM users
-            WHERE MATCH(email, username) AGAINST('${keyword}' IN BOOLEAN MODE);
+            WHERE email LIKE '%${keyword}%' OR username LIKE '%${keyword}%';        
         `;
+
         try {
-            const result = await this.execQuerty(query);
-            return result;
+            const result = await this.execQuerty(query) as {"uid": string}[];
+            return result.map(r => r["uid"]);
         } catch (error) {
             throw error;
         }

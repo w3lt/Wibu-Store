@@ -15,16 +15,35 @@ const search = new Search();
 app.route('/')
     .post(async (req, res) => {        
         const keyword = req.body.keyword;
-        const type = req.body.type;
         
         if (!keyword) res.send(new MyResponse(0, 'error', "null keyword!"));
         else {
             try {
-                const result = await search.search(keyword, type);
+                const result = await search.search(keyword);
                 res.send(new MyResponse(0, 'data', result));
             } catch (error) {
                 console.log(error);
-                res.send(new MyResponse(0, 'error', error));
+                res.send(new MyResponse(1, 'error', error));
+            }
+        }
+    });
+
+app.route('/:type')
+    .post(async (req, res) => {
+        const type = req.params.type;
+        const keyword = req.body.keyword;
+
+        if (!keyword) res.send(new MyResponse(0, 'error', "null keyword!"));
+        else {
+            try {
+                switch (type) {
+                    case "user":
+                        const result = await search.searchOnUser(keyword);
+                        res.send(new MyResponse(0, 'data', result));
+                        break
+                }
+            } catch (error) {
+                res.send(new MyResponse(1, 'error', error));
             }
         }
     })

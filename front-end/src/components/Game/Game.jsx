@@ -26,6 +26,7 @@ import Checkout from "../Checkout/Checkout";
 
 import closeSymbol from "../../assets/close-icon.png";
 import { CookiesContext } from "../../context/Cookies";
+import SendGift from "../SendGift/SendGift";
 
 const Game = () => {
 
@@ -52,6 +53,8 @@ const Game = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     const [isLoved, setIsLoved] = useState(false);
+
+    const [isSendingGift, setIsSendingGift] = useState(false);
 
     function handleOtherButtonHover(id) {
         setIsHoveringOtherBtn(id);
@@ -179,7 +182,11 @@ const Game = () => {
                         </div>
                         <div id="gift-btn"
                             onMouseEnter={() => {handleOtherButtonHover(1)}}
-                            onMouseLeave={handleOtherButtonLeave}>
+                            onMouseLeave={handleOtherButtonLeave}
+                            onClick={() => {
+                                if (isLoggedIn) {setIsSendingGift(true)} 
+                                else navigate("/login");
+                            }}>
                             {isHoveringOtherBtn === 1 ? <img src={giftHoverSymbol} alt="" /> : <img src={giftSymbol} alt="" />}
                             </div>
                         <div id="love-btn"
@@ -247,6 +254,23 @@ const Game = () => {
                         </div>
                     </div>
                 </div>
+            </div>}
+
+            {(isSendingGift === true) && <div className="is-sending-gift">
+            <div 
+                style={{
+                    display: "flex", 
+                    width: "41%", 
+                    height: "41%",
+                    backgroundColor: "white",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    borderRadius: "10px",
+                    backgroundColor: "#393939"
+                }}>
+                <SendGift />
+            </div>
+            
             </div>}
         </div>
     )

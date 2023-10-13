@@ -181,6 +181,7 @@ app.route('/users/:userID/:field')
             if (result) {
                 const getField = req.params.field;
                 const data = await new User(req.params.userID).get(getField);
+                console.log(data);
                 res.send(new Response(0, 0, data));
             } else {
                 res.send(new Response(0, 5).toJSON());
@@ -405,6 +406,35 @@ app.route('/search')
                 res.send(new Response(1).toJSON());
             }
         }
+    })
+
+app.route('/search/:type')
+    .post(async (req, res) => {
+        const keyword = req.body.keyword;
+        const type = req.params.type;
+
+        var data;
+        const searchClient = new SearchClient();
+
+        try {
+            switch (type) {
+                case "user":
+                    const result = await searchClient.search(keyword, type);
+                    data = await Promise.all(result.map(async uid => {
+                        const e = await new User(uid).get("avatar", "username");
+                        e.uid = uid;
+                        return e;
+                    }));
+
+                    console.log(data);
+                    res.send(new Response(0, 0, data).toJSON());
+                    return;
+            }
+        } catch (error) {
+            console.log(error);
+            res.send(new Response(1).toJSON());
+        }
+        
     })
 
 app.route('/love')

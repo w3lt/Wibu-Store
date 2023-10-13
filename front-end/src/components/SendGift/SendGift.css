@@ -1,0 +1,153 @@
+.send-gift {
+    display: flex;
+    flex-direction: column;
+    width: calc(100% - 20px);
+    height: calc(100% - 20px);
+    color: white;
+    margin: 10px;
+}
+
+.send-gift .message-container {
+    display: flex;
+    margin-top: 10px;
+    width: 100%;
+    flex-grow: 1;
+}
+
+.send-gift .message-container textarea {
+    width: 100%;
+    height: calc(100% - 10px);
+    resize: none;
+    background-color: transparent;
+    border: 1px solid white;
+    border-radius: 5px;
+    color: white;
+    outline: none;
+    padding: 5px;
+    font-size: 1rem;
+}
+
+.send-gift .message-container textarea::placeholder {
+    color: white;
+}
+
+.send-gift .search-bar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    position: relative;
+}
+
+.send-gift .search-bar .to-friend {
+    display: flex;
+    align-items: center;
+    background-color: #302F2F;
+    padding: 5px 0 5px 5px;
+    border-radius: 5px;
+    margin: 0 5px;
+}
+
+.send-gift .search-bar .is-searching {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.send-gift .search-bar .to-friend input {
+    color: white;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    resize: none;
+}
+
+.send-gift .search-bar .to-friend input::placeholder {
+    color: white;
+}
+
+.send-gift .search-bar .search-btn {
+    color: white;
+    background-color: #395B64;
+    padding: 5px 10px;
+    border-radius: 10px;
+    margin-left: 10px;
+}
+
+.send-gift .search-bar .search-btn:hover {
+    cursor: pointer;
+}
+
+.send-gift .search-bar .search-results {
+    background-color: #302F2F;
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 27.5px;
+    left: 23.18px;
+    width: 148px;
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+}
+
+.send-gift .search-bar .search-results > .result {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    padding: 2px 1px;
+}
+
+.send-gift .search-bar .search-results > .result:hover {
+    cursor: pointer;
+    border-color: white;
+}
+
+.send-gift .search-bar .search-results > .result .avatar {
+    width: 32px;
+    aspect-ratio: 1 / 1;
+    height: 32px;
+    margin-right: 5px;
+}
+
+.send-gift .search-bar .search-results > .result .avatar > img {
+    width: 100%;
+    height: 100%;
+}
+
+.search-bar .receiver {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border-radius: 3px;
+    padding: 2px 4px;
+    background-color: #302F2F;
+    margin-left: 5px;
+}
+
+.search-bar .receiver:hover {
+    cursor: pointer;
+}
+
+.search-bar .receiver .avatar {
+    width: 32px;
+    aspect-ratio: 1 / 1;
+    height: 32px;
+    margin-right: 5px;
+}
+
+.search-bar .receiver .avatar > img {
+    width: 100%;
+    height: 100%;
+}
+
+.search-bar .receiver .cancel-btn {
+    width: 8px;
+    height: 8px;
+    display: flex;
+    margin-left: 5px;
+}
+
+.search-bar .receiver .cancel-btn > img {
+    width: 100%;
+    height: 100%;
+}

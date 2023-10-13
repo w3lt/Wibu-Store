@@ -15,18 +15,20 @@ class User {
         this.#condition = `uid='${this.#uid}'`;
     }
 
-    async get(getField) {
+    async get(...getFields) {
         try {
-            let result;
-            if (getField === "avatar") {
-                result = await this.getAvatar();
-                return result;
-            } else {
-                result = await execGetQuery(this.#tableName, getField, this.#condition);
-                if (result.length !== 0) return result[0][getField];
-                else return null;
-            }
+            const result = {};
             
+            await Promise.all(getFields.map(async getField => {
+                if (getField === "avatar") {
+                    result[getField] = await this.getAvatar();
+                } else {
+                    const data = await execGetQuery(this.#tableName, getField, this.#condition);
+                    if (result.length !== 0) result[getField] = data[0][getField];
+                }
+            }))
+            
+            return result;
         } catch (error) {
             throw error;
         }

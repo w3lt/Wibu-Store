@@ -26,28 +26,35 @@ export default function Header() {
 
     const [isDropped, setIsDropped] = useState(false);
 
-    useEffect(() => {
-        var cartNumber = 0;
-        for (var item in cookies) {
-            cartNumber += cookies[item];
-        }
-        setCartNumber(cartNumber);
+    const [isLoading, setIsLoading] = useState(true);
 
-        (async () => {
-            const session = await checkSession();
-            console.log(session);
-            if (session.result) {
-                setAvatar(await fetchUserInfor(session.uid, "avatar"));
-                setIsLoggedIn(true);
+    useEffect(() => {
+        if (isLoading) {
+            var cartNumber = 0;
+            for (var item in cookies) {
+                cartNumber += cookies[item];
             }
-        }) ();
-        window.addEventListener('resize', () => {
-            if (window.innerWidth < 0.7 * window.screen.width) {
-                setIsBigEnough(false);
-            } else {
-                setIsBigEnough(true);
-            }
-        })
+            setCartNumber(cartNumber);
+
+            (async () => {
+                const session = await checkSession();
+                console.log(session);
+                if (session.result) {
+                    setAvatar(await fetchUserInfor(session.uid, "avatar"));
+                    setIsLoggedIn(true);
+                }
+            }) ();
+            window.addEventListener('resize', () => {
+                if (window.innerWidth < 0.7 * window.screen.width) {
+                    setIsBigEnough(false);
+                } else {
+                    setIsBigEnough(true);
+                }
+            })
+
+            setIsLoading(false);
+        }
+        
     })
 
     const [isHoveringCartBtn, setIsHoveringCartBtn] = useState(false);

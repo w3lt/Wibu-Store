@@ -139,7 +139,7 @@ async function fetchUserInfor(UID, getField) {
     const method = "GET";
     try {
         const result = await execRequest(route, method);
-        if (result.id === 0) return result.data;
+        if (result.id === 0) return result.data[getField];
         else console.log(result.msg);
     } catch (error) {
         throw error;
@@ -170,9 +170,10 @@ async function getDatas(dataType, number=5, start_index=0) {
     }
 }
 
-async function search(keyword) {
-    const route = "/search";
+async function search(keyword, type) {
+    var route = "/search";
     const method = "POST";
+    if (type) route = route + `/${type}`;
     try {
         const result = await execRequest(route, method, {keyword: keyword});
         if (result.id === 0) return result.data;
