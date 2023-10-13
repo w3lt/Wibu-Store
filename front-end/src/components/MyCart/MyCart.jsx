@@ -1,5 +1,5 @@
 import Cookies from "js-cookie";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { displayPrice, fetchGameInfor } from "../../support";
 
 import "./MyCart.css";
@@ -43,11 +43,11 @@ function MyCart() {
             }) ();
             setIsLoading(false);
         }
-        
-        
-    })
+           
+    }, [isPaying]);
 
-    return <div className="my-cart">
+    if (isLoading) return null;
+    else return <div className="my-cart">
         <div style={{
             display: "flex",
             flexDirection: "column",
@@ -98,13 +98,13 @@ function MyCart() {
 
                     <div>Subtotal <span>${prices}</span></div>
 
-                    <div className="purchase-btn" onClick={() => {setIsPaying(true)}}>Purchare</div>
+                    <div className="purchase-btn" onClick={() => {setIsPaying(true); document.addEventListener('keydown', e => {if (e.key === "Escape") setIsPaying(false);})}}>Purchare</div>
                     <div className="purchase-as-gift"><span>Or</span> <span>Purchase as a Gift</span></div>
                 </div>
             </div>
         </div>
 
-        {(isPaying === true) && <div className="is-paying">
+        {(isPaying === true) && <div className="is-paying" tabIndex="0">
             <div 
                 style={{
                     display: "flex", 

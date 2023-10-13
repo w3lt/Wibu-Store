@@ -4,7 +4,7 @@ import Cookies from "js-cookie";
 import { useNavigate, useParams } from "react-router-dom";
 
 import "./Game.css";
-import { checkSession, fetchGameInfor } from "../../support";
+import { checkSession, fetchGameInfor, getLove, love } from "../../support";
 
 
 import Loading from "../Loading/Loading";
@@ -47,6 +47,12 @@ const Game = () => {
 
     const [cookies, updateCookies] = useContext(CookiesContext);
 
+    const [isInCart, setIsInCart] = useState(false);
+
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    const [isLoved, setIsLoved] = useState(false);
+
     function handleOtherButtonHover(id) {
         setIsHoveringOtherBtn(id);
     }
@@ -57,7 +63,13 @@ const Game = () => {
 
     function addToCart(gameID) {
         const cookiesValue = JSON.parse(Cookies.get('cart') || "{}");
-        cookiesValue[gameID] = (cookiesValue[gameID] || 0) + 1;
+        if (!cookiesValue[gameID]) {
+            cookiesValue[gameID] = 1;
+            setIsInCart(true);
+        } else {
+            delete cookiesValue[gameID];
+            setIsInCart(false);
+        }
         updateCookies(cookiesValue);
     }
 
@@ -76,6 +88,13 @@ const Game = () => {
                     if (0.8 >= (point - Math.floor(point)) && (point - Math.floor(point))  >= 0.3) points[Math.floor(point)] = 0.5;
                     else if (point - Math.floor(point) > 0.7) points[Math.floor(point)] = 1;
                     setPointStars(points);
+
+                    const cookiesValue = JSON.parse(Cookies.get('cart') || "{}");
+                    if (cookiesValue[gameID]) setIsInCart(true);
+
+                    if ((await checkSession()).result) setIsLoggedIn(true);
+
+                    setIsLoved(await getLove(gameID));
 
                     setIsLoading(false);
                 }
@@ -144,7 +163,7 @@ const Game = () => {
                 </div>
 
                 <div className="actions">
-                    <div className="buy-btn" onClick={async () => {if ((await checkSession()).result) setIsPaying(true); else navigate("/login") ;}}>
+                    <div className="buy-btn" onClick={async () => {if (isLoggedIn) setIsPaying(true); else navigate("/login") ;}}>
                         <div style={{fontWeight: "600"}}>Buy</div>
                         <div>${gameInfor.price}</div>
                     </div>
@@ -156,7 +175,7 @@ const Game = () => {
                             onMouseEnter={() => {handleOtherButtonHover(0)}}
                             onMouseLeave={handleOtherButtonLeave}
                             onClick={() => {addToCart(gameID)}}>
-                            {(isHoveringOtherBtn === 0) ? <img src={cartHoverSymbol} alt="" /> : <img src={cartSymbol} alt="" />}
+                            <img src={isInCart ? (isHoveringOtherBtn === 0 ? cartSymbol : cartHoverSymbol) : (isHoveringOtherBtn === 0 ? cartHoverSymbol : cartSymbol)} alt="" />
                         </div>
                         <div id="gift-btn"
                             onMouseEnter={() => {handleOtherButtonHover(1)}}
@@ -165,8 +184,21 @@ const Game = () => {
                             </div>
                         <div id="love-btn"
                             onMouseEnter={() => {handleOtherButtonHover(2)}}
-                            onMouseLeave={handleOtherButtonLeave}>
-                            {isHoveringOtherBtn === 2 ? <img src={loveHoverSymbol} alt="" /> : <img src={loveSymbol} alt="" />}
+                            onMouseLeave={handleOtherButtonLeave}
+                            onClick={async () => {
+                                if (isLoggedIn) {
+                                    var query;
+                                    if (isLoved) query = "remove"; else query = "add";
+                                    try {
+                                        await love(gameID, query);
+                                        setIsLoved(previous => !previous);
+                                    } catch (error) {
+                                        console.log(error);
+                                    }
+                                    
+                                } else navigate("/login");
+                            }}>
+                            <img src={(isLoggedIn && isLoved) ? (isHoveringOtherBtn === 2 ? loveSymbol : loveHoverSymbol) : (isHoveringOtherBtn === 2 ? loveHoverSymbol : loveSymbol)} alt="" />
                         </div>
                     </div>
                 </div>

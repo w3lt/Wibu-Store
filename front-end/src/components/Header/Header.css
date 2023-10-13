@@ -250,3 +250,30 @@
 .avatar-container:hover {
     cursor: pointer;
 }
+
+.avatar-container + .drop-box {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 52px;
+    right: 20px;
+    background-color: #395B64;
+    width: 80px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.avatar-container + .drop-box > div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px 0;
+    border: solid 1px transparent;
+    border-radius: 5px;
+}
+
+.avatar-container + .drop-box > div:hover {
+    cursor: pointer;
+    border-color: white;
+    
+}

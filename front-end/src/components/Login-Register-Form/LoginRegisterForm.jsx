@@ -72,7 +72,10 @@ function LoginForm({ setIsInLogIn, navigate }) {
             const result = await login(username_email, password);
             console.log(result);
             if (result.id === 0) {
-                navigate(-1);
+                while (!(await checkSession()).result) {
+
+                }
+                window.history.back();
             } else if (result.id === 4) {
                 document.querySelector(".login-error").innerHTML = result.msg;
                 console.log(result);

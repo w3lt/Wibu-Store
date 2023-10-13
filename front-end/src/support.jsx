@@ -71,7 +71,6 @@ async function login(accountID, password) {
         } else {
             throw new Error(responseData.error);
         }
-
     } catch (error) {
         throw error;
     }
@@ -176,11 +175,34 @@ async function search(keyword) {
     const method = "POST";
     try {
         const result = await execRequest(route, method, {keyword: keyword});
-        console.log(result);
         if (result.id === 0) return result.data;
         else console.log(result.msg);
     } catch (error) {
         throw error;
+    }
+}
+
+async function love(gameID, query) {
+    const route = "/love/";
+    const method = "POST";
+    try {
+        const result = await execRequest(route, method, {gameID: gameID, query: query});
+        if (result.id === 0) return true;
+        else console.log(result.msg);
+    } catch (error) {
+        throw error;
+    }
+}
+
+async function getLove(gameID) {
+    const route = `/love/${gameID}`;
+    const method = "GET";
+    try {
+        const result = await execRequest(route, method);
+        if (result.id === 0) return result.data;
+        else console.log(result.msg);
+    } catch (error) {
+        console.log(error);
     }
 }
 
@@ -189,4 +211,4 @@ function displayPrice(price) {
 }
 
 export {checkSession, login, register, logout, execRequest, fetchGameInfor, fetchUserInfor,
-        getTopBanners, getDatas, displayPrice, search};
+        getTopBanners, getDatas, displayPrice, search, love, getLove};

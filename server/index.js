@@ -7,7 +7,7 @@ const MySQLStore = require('express-mysql-session')(session);
 const Cache = require('./cache').Cache;
 
 const passport = require('passport');
-const { sqlPool, convertPath2IMG } = require('./support');
+const { sqlPool, convertPath2IMG, execQuery } = require('./support');
 const { Response } = require('./response');
 const { Game } = require('./structure/Game/Game');
 const { SearchClient } = require('./search');
@@ -406,6 +406,60 @@ app.route('/search')
             }
         }
     })
+
+app.route('/love')
+    .post(async (req, res) => {
+        try {
+            const result = await User.checkSession(req.session.id);
+            if (result) {
+                const gameID = req.body.gameID;
+                const type = req.body.query;
+                var query;
+                if (type === "add") {
+                    query = `
+                        INSERT INTO loves
+                        VALUES (${req.session.uid}, ${gameID});
+                    `;
+                } else if (type === "remove") {
+                    query = `
+                        DELETE FROM loves
+                        WHERE uid=${req.session.uid} AND gameID=${gameID};
+                    `;
+                }
+
+                await execQuery(query);
+                res.send(new Response(0, 0).toJSON());
+            } else {
+                res.send(new Response(0, 5).toJSON());
+            }
+        } catch (error) {
+            console.log(error);
+            res.send(new Response(1).toJSON());
+        }
+    })
+
+app.route('/love/:gameID')
+    .get(async (req, res) => {
+        try {
+            const checkSessionresult = await User.checkSession(req.session.id);
+            if (checkSessionresult) {
+                const query = `
+                    SELECT * FROM loves
+                    WHERE uid=${req.session.uid} AND gameID=${req.params.gameID};
+                `;
+
+                const result = await execQuery(query);
+                const data = result.length > 0;
+                
+                res.send(new Response(0, 0, data).toJSON());
+            } else {
+                res.send(new Response(0, 5).toJSON());
+            }
+        } catch (error) {
+            console.log(error);
+            res.send(new Response(1).toJSON());
+        }
+    });
 
 const PORT = config.PORT;
 app.listen(PORT, async () => {

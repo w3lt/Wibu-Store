@@ -24,6 +24,8 @@ export default function Header() {
 
     const [cartNumber, setCartNumber] = useState(0);
 
+    const [isDropped, setIsDropped] = useState(false);
+
     useEffect(() => {
         var cartNumber = 0;
         for (var item in cookies) {
@@ -33,6 +35,7 @@ export default function Header() {
 
         (async () => {
             const session = await checkSession();
+            console.log(session);
             if (session.result) {
                 setAvatar(await fetchUserInfor(session.uid, "avatar"));
                 setIsLoggedIn(true);
@@ -102,14 +105,23 @@ export default function Header() {
                 onMouseLeave={() => {setIsHoveringCartBtn(false)}}
                 onClick={() => {window.location.href = "/cart"}}>
                 {isHoveringCartBtn ? <img src={cartBtnHoverSymbol} alt="cart" /> : <img src={cartBtnSymbol} alt="cart" />}
-                <div className="cart-number">
-                    {cartNumber !== 0 && cartNumber}
-                </div>
+                {cartNumber !== 0 && <div className="cart-number">
+                    {cartNumber}
+                </div>}
             </div>
 
             {isLoggedIn ? 
-                <div className="avatar-container" onClick={async () => {await logout(); window.location.href = window.location.href;}}>
-                    <img src={`data:image/jpeg;base64,${avatar}`} className="avatar" alt="" />
+                <div style={{
+                    display: "flex"
+                }}>
+                    <div className="avatar-container">
+                        <img src={`data:image/jpeg;base64,${avatar}`} className="avatar" alt="" onClick={() => {setIsDropped(previous => !previous)}} />
+                    </div>
+                    
+                    {(isDropped === true) && <div className="drop-box">
+                        <div>Setting</div>
+                        <div onClick={async () => {await logout(); window.location.href = window.location.href;}}>Logout</div>
+                    </div>}
                 </div> :
                 <div className="login-button" onClick={() => {window.location.href = "/login"}}>Login</div>}
         </div>

@@ -96,6 +96,7 @@
 }
 
 .other-btns div {
+    user-select: none;
     aspect-ratio: 1 / 1;
     background-color: white;
     width: 48px;
