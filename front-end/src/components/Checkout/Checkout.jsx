@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
-    CardElement,
     PaymentElement,
     useStripe,
     useElements
@@ -8,24 +7,36 @@ import {
 
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
-import { execRequest } from "../../support";
+import { confirmPayment, execRequest, sendGift } from "../../support";
 
 import "./Checkout.css";
+import { SendGiftContext } from "../../context/SendGift";
 
 function CheckoutForm() {
+
+    const [receiver, giftMessage, gameIDs] = useContext(SendGiftContext);
+
+    async function handleSendGift() {
+        if (receiver) {
+            try {
+                await sendGift(receiver, gameIDs, giftMessage);
+            } catch (error) {
+                console.log(error);
+            }   
+        }
+    }
+
     const stripe = useStripe();
     const elements = useElements();
-
-
 
     const [message, setMessage] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         if (!stripe) {
-            return;
+          return;
         }
-    }, [stripe]);
+      }, [stripe]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -49,8 +60,8 @@ function CheckoutForm() {
                         }
                     }
                 },
-                return_url: window.location.href,
             },
+            redirect: "if_required"
         });
 
         // This point will only be reached if there is an immediate error when
@@ -58,13 +69,19 @@ function CheckoutForm() {
         // your `return_url`. For some payment methods like iDEAL, your customer will
         // be redirected to an intermediate site first to authorize the payment, then
         // redirected to the `return_url`.
-        if (error.type === "card_error" || error.type === "validation_error") {
-            setMessage(error.message);
+        if (error) {
+            if (error.type === "card_error" || error.type === "validation_error") {
+                setMessage(error.message);
+            } else {
+                setMessage("An unexpected error occurred.");
+            }
         } else {
-            setMessage("An unexpected error occurred.");
+            await handleSendGift();
+            // await confirmPayment();
         }
 
         setIsLoading(false);
+        
     };
 
     const paymentElementOptions = {
@@ -102,7 +119,7 @@ const stripePromise = loadStripe("pk_test_51NsNMwJqOqW5UsDeY4l4UeBtEMW1Cz7fUnr5U
 
 export default function Checkout({ gameIDs }) {
     
-    // const [orderSummary, setOrderSummary] = useState([]);
+    const [receiver, message] = useContext(SendGiftContext);
 
     const [clientSecret, setClientSecret] = useState("");
 
@@ -132,7 +149,9 @@ export default function Checkout({ gameIDs }) {
         <div className="checkout">
             {clientSecret && (
                 <Elements options={options} stripe={stripePromise}>
-                    <CheckoutForm />
+                    <SendGiftContext.Provider value={[receiver, message, gameIDs]}>
+                        <CheckoutForm />
+                    </SendGiftContext.Provider>
                 </Elements>
             )}
         </div>

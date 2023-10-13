@@ -27,6 +27,7 @@ import Checkout from "../Checkout/Checkout";
 import closeSymbol from "../../assets/close-icon.png";
 import { CookiesContext } from "../../context/Cookies";
 import SendGift from "../SendGift/SendGift";
+import { SendGiftContext } from "../../context/SendGift";
 
 const Game = () => {
 
@@ -55,6 +56,15 @@ const Game = () => {
     const [isLoved, setIsLoved] = useState(false);
 
     const [isSendingGift, setIsSendingGift] = useState(false);
+
+    // for send gift
+    const [receiver, setReceiver] = useState(null);
+    const [message, setMessage] = useState(null);
+    
+    const finishMessageAndPay = () => {
+        setIsSendingGift(false);
+        setIsPaying(true);
+    }
 
     function handleOtherButtonHover(id) {
         setIsHoveringOtherBtn(id);
@@ -242,7 +252,9 @@ const Game = () => {
                     <div className="close-btn" onClick={() => {setIsPaying(false)}}>
                         <img src={closeSymbol} alt="" />
                     </div>
-                    <Checkout gameIDs={[gameInfor.id]} />
+                    <SendGiftContext.Provider value={[receiver, message]}>
+                        <Checkout gameIDs={[gameInfor.id]} />
+                    </SendGiftContext.Provider>
                     <div className="order-summary">
                         <div className="order-summary-title">Order Summary</div>
                         <div className="order-summary-cover-img">
@@ -268,7 +280,9 @@ const Game = () => {
                     borderRadius: "10px",
                     backgroundColor: "#393939"
                 }}>
-                <SendGift />
+                <SendGiftContext.Provider value={[setReceiver, setMessage, finishMessageAndPay]}>
+                    <SendGift />
+                </SendGiftContext.Provider>
             </div>
             
             </div>}

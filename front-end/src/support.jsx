@@ -207,9 +207,28 @@ async function getLove(gameID) {
     }
 }
 
+async function sendGift(receiver, gift, message) {
+    try {
+        const result = await execRequest("/gift", "POST", {receiver: receiver, gift: gift, message: message});
+        if (result.id === 0) return result.data;
+        else console.log(result.msg);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+async function confirmPayment() {
+    try {
+        const result = await execRequest("/confirm-payment", "POST");
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 function displayPrice(price) {
     return (price === 0 ? "Free" : `$${price}`)
 }
 
 export {checkSession, login, register, logout, execRequest, fetchGameInfor, fetchUserInfor,
-        getTopBanners, getDatas, displayPrice, search, love, getLove};
+        getTopBanners, getDatas, displayPrice, search, love, getLove, sendGift, confirmPayment};

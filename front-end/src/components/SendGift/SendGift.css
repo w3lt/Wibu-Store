@@ -151,3 +151,24 @@
     width: 100%;
     height: 100%;
 }
+
+.send-gift .search-bar .send-btn {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #395B64;
+    padding: 5px 10px;
+    border-radius: 10px;
+    user-select: none;
+}
+
+.send-gift .search-bar .not-allow-to-send {
+    cursor: not-allowed;
+    background-color: #E4E5EA;
+    color: #C1C2C7;
+}
+
+.send-gift .search-bar .allow-to-send {
+    cursor: pointer;
+}

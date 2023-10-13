@@ -1,5 +1,5 @@
 CREATE TABLE purchaseHistories (
-    id INT NOT NULL,
+    id INT NOT NULL AUTO_INCREMENT,
     uid INT UNSIGNED NOT NULL,
     gameID INT NOT NULL,
     price DECIMAL(6, 2) NOT NULL,

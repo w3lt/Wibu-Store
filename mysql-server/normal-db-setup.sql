@@ -55,12 +55,3 @@ CREATE TABLE gameStoreRelatedIn4 (
     PRIMARY KEY (id),
     FOREIGN KEY (id) REFERENCES games(id)
 );
-
--- love
-CREATE TABLE loves (
-    uid INT UNSIGNED NOT NULL,
-    gameID INT NOT NULL,
-    FOREIGN KEY (uid) REFERENCES users(uid),
-    FOREIGN KEY (gameID) REFERENCES games(id),
-    PRIMARY KEY (uid, gameID)
-);

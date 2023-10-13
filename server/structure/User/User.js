@@ -290,5 +290,25 @@ class User {
             throw error;
         }
     }
+
+    // method @sendGift is used to send a gift to another user
+    // @params: receiver, gift, message
+    // return: true
+    async sendGift(receiver, gift, message) {
+        const query = `
+            INSERT INTO gifts (sender, receiver, gift, message)
+            VALUES (${this.#uid}, ${receiver}, '${JSON.stringify(gift)}', '${message || 'NULL'}');
+        `;
+
+        try {
+            const result = await execQuery(query);
+            if (result["affectedRows"] === 1) return true;
+            else {
+                return false;
+            }
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 exports.User = User;

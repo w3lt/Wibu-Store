@@ -59,5 +59,8 @@ const responses = [
     {id: 4, msg: "email or password incorrect!"},
     // +++ ------------------------------------- +++ //
     // response for check session
-    {id: 5, msg: "user unauthorized!"}
+    {id: 5, msg: "user unauthorized!"},
+    // +++ ------------------------------------- +++ //
+    // gift
+    {id: 6, msg: "you cannot send gift to yourself!"}
 ]

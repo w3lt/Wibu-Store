@@ -229,6 +229,11 @@ app.route("/create-payment-intent")
 
     });
 
+// app.route('/confirm-payment')
+//     .post(async (req, res) => {
+//         const customer = await stripe.customers.create();
+//     })
+
 app.route('/datas/:field/:subfield?')
     .post(async (req, res) => {
         const basePoint = `http://${config.DATA_ANALYSIS_SERVER}:${config.DATA_ANALYSIS_SERVER_PORT}`;
@@ -490,6 +495,32 @@ app.route('/love/:gameID')
             res.send(new Response(1).toJSON());
         }
     });
+
+app.route("/gift")
+    .post(async (req, res) => {
+        try {
+            const checkSessionResult = await User.checkSession(req.session.id);
+            if (checkSessionResult) {
+                const uid = req.session.uid;
+                const receiver = req.body.receiver;
+                if (uid === receiver) {
+                    res.send(new Response(0, 6).toJSON());
+                    return
+                }
+                const gift = req.body.gift;
+                const message = req.body.message;
+
+                const result = await (new User(uid)).sendGift(receiver, gift, message);
+                res.send(new Response(0, 0, result));
+            } else {
+                res.send(new Response(0, 5).toJSON());
+            }
+        } catch (error) {
+            console.log(error);
+            res.send(new Response(1).toJSON());
+        }
+        
+    })
 
 const PORT = config.PORT;
 app.listen(PORT, async () => {
