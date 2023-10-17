@@ -14,6 +14,7 @@ CREATE TABLE gifts (
     receiver INT UNSIGNED NOT NULL,
     gift JSON NOT NULL,
     message VARCHAR(255),
+    time DATETIME NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (sender) REFERENCES users(uid),
     FOREIGN KEY (receiver) REFERENCES users(uid)

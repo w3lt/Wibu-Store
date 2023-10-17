@@ -20,7 +20,15 @@ export default function Header() {
     const [searchBarText, setSearchBarText] = useState('');
     const [searchResults, setSearchResults] = useState(null);
 
-    const [cookies] = useContext(CookiesContext);
+    const [cookies, updateCookies] = useContext(CookiesContext);
+
+    const calculateCartNumber = () => {
+        var cartNumber = 0;
+        for (var item in cookies) {
+            cartNumber += cookies[item];
+        }
+        return cartNumber;
+    }  
 
     const [cartNumber, setCartNumber] = useState(0);
 
@@ -29,13 +37,9 @@ export default function Header() {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        if (isLoading) {
-            var cartNumber = 0;
-            for (var item in cookies) {
-                cartNumber += cookies[item];
-            }
-            setCartNumber(cartNumber);
+        setCartNumber(calculateCartNumber());
 
+        if (isLoading) {
             (async () => {
                 const session = await checkSession();
                 console.log(session);
@@ -55,7 +59,7 @@ export default function Header() {
             setIsLoading(false);
         }
         
-    })
+    }, [cookies]);
 
     const [isHoveringCartBtn, setIsHoveringCartBtn] = useState(false);
     const headerCategories = ["Latest", "Genre", "Collection", "Deal"];

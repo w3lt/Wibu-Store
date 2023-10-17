@@ -1,20 +1,36 @@
 import Cookies from "js-cookie";
 import React, { useEffect, useRef, useState } from "react";
-import { displayPrice, fetchGameInfor } from "../../support";
+import { checkSession, displayPrice, fetchGameInfor } from "../../support";
 
 import "./MyCart.css";
 import windowsLogo from "../../assets/windows_logo.png";
 import macOSLogo from "../../assets/macos_logo.png";
 import Checkout from "../Checkout/Checkout";
+import { SendGiftContext } from "../../context/SendGift";
+import SendGift from "../SendGift/SendGift";
+import { useNavigate } from "react-router-dom";
 
 function MyCart() {
+    const navigate = useNavigate();
+
     const [isLoading, setIsLoading] = useState(true);
     const [items, setItems] = useState(null);
     const [gameIDs, setGameIDs] = useState([]);
     const [numberOfItems, setNumberOfItems] = useState(0);
     const [prices, setPrices] = useState(0);
 
+    const [message, setMessage] = useState(null); // for sending gift
+    const [receiver, setReceiver] = useState(null); // for sending gift
+
     const [isPaying, setIsPaying] = useState(false);
+    const [isSendingGift, setIsSendingGift] = useState(false);
+
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    const finishMessageAndPay = () => {
+        setIsSendingGift(false);
+        setIsPaying(true);
+    }
 
     useEffect(() => {
         if (isLoading) {
@@ -26,7 +42,7 @@ function MyCart() {
                     var numberOfItems = 0;
                     var prices = 0;
                     for(var item in cart) {
-                        const data = await fetchGameInfor(cart[item], ["thumbnail", "title", "supported_platforms", "types", "price"]);
+                        const data = await fetchGameInfor(item, ["thumbnail", "title", "supported_platforms", "types", "price"]);
                         items.push([data, cart[item]]);
                         gameIDs.push(item);
                         numberOfItems += cart[item];
@@ -36,6 +52,8 @@ function MyCart() {
                     setItems(items);
                     setGameIDs(gameIDs);
                     setPrices(prices);
+
+                    if ((await checkSession()).result) setIsLoggedIn(true);
                 } catch (error) {
                     console.log(error);
                 }
@@ -99,7 +117,12 @@ function MyCart() {
                     <div>Subtotal <span>${prices}</span></div>
 
                     <div className="purchase-btn" onClick={() => {setIsPaying(true); document.addEventListener('keydown', e => {if (e.key === "Escape") setIsPaying(false);})}}>Purchare</div>
-                    <div className="purchase-as-gift"><span>Or</span> <span>Purchase as a Gift</span></div>
+                    <div className="purchase-as-gift"><span>Or</span> <span onClick={() => {
+                            if (isLoggedIn) {setIsSendingGift(true)} 
+                            else navigate("/login");
+                        }}>
+                            Purchase as a Gift</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -121,7 +144,9 @@ function MyCart() {
                     width: "70%",
                     marginRight: "10px"
                 }}>
-                    <Checkout gameIDs={gameIDs} />
+                    <SendGiftContext.Provider value={[receiver, message]}>
+                        <Checkout gameIDs={gameIDs} />
+                    </SendGiftContext.Provider>
                 </div>
                 
                 <div className="pay-bill">
@@ -138,7 +163,24 @@ function MyCart() {
                 </div>
             </div>
         </div>}
-        
+
+        {(isSendingGift === true) && <div className="is-sending-gift">
+            <div 
+                style={{
+                    display: "flex", 
+                    width: "41%", 
+                    height: "41%",
+                    backgroundColor: "white",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    borderRadius: "10px",
+                    backgroundColor: "#393939"
+                }}>
+                <SendGiftContext.Provider value={[setReceiver, setMessage, finishMessageAndPay]}>
+                    <SendGift />
+                </SendGiftContext.Provider>
+            </div>
+        </div>}
     </div>
 }
 

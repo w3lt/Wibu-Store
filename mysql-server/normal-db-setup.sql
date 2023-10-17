@@ -8,10 +8,10 @@ CREATE TABLE users (
     gender TINYINT,
     dob DATETIME,
     created_at DATETIME NOT NULL,
+    games JSON
     type TINYINT DEFAULT 0,
     PRIMARY KEY (uid),
-    UNIQUE (email),
-    UNIQUE (password)
+    UNIQUE (email)
 );
 
 -- create genres table

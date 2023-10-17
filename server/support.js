@@ -45,27 +45,6 @@ async function execSetQuery(tableName, setStatement, condition) {
 };
 exports.execSetQuery = execSetQuery;
 
-// async function getDataFromCache(key) {
-//     try {
-//         const client = await createClient({
-//             url: "redis://redis:6379"
-//         })
-//             .on('error', err => {
-//             console.error('Redis Client Error', err);
-//             client.quit(); // Close the client on error
-//         })
-//             .connect();
-
-//         const data = await client.lRange(key, 0, -1);
-//         await client.quit(); // Properly disconnect the client after getting the data
-
-//         return data;
-//     } catch (error) {
-//         throw error; // Re-throw the error for further handling
-//     }
-// }
-// exports.getDataFromCache = getDataFromCache;
-
 async function generateNewUID() {
     try {
         const query = `SELECT MAX(uid) as last_uid FROM users`;

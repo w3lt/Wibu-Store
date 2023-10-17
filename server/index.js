@@ -30,6 +30,8 @@ app.use(session({
     cookie: { maxAge: 60 * 60 * 1000 }
 }))
 
+app.use('/webhook', express.raw({ type: 'application/json' }));
+
 // Use body-parser
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -181,7 +183,6 @@ app.route('/users/:userID/:field')
             if (result) {
                 const getField = req.params.field;
                 const data = await new User(req.params.userID).get(getField);
-                console.log(data);
                 res.send(new Response(0, 0, data));
             } else {
                 res.send(new Response(0, 5).toJSON());
@@ -193,18 +194,81 @@ app.route('/users/:userID/:field')
         
     });
 
+// This is your Stripe CLI webhook secret for testing your endpoint locally.
+const endpointSecret = "whsec_3c38a2c4ecb7c42416e8ea9dc5a2a7307f6f95ddcac0e1034e91a5f72923dbc9";
+app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+    const sig = req.headers['stripe-signature'];
+    let event;
+
+    try {
+        event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+        switch (event.type) {
+            case 'payment_intent.succeeded':
+                const paymentIntentSucceeded = event.data.object;
+
+                // Save purchase history
+                var query = `
+                    INSERT INTO purchaseHistories (data, time)
+                    VALUES ('${JSON.stringify(paymentIntentSucceeded)}', '${new Date().toISOString().slice(0, 19).replace('T', ' ')}');
+                `;
+    
+                await execQuery(query);
+
+                const giftInfo = paymentIntentSucceeded.metadata.gift.split(', ');
+                const receiver = giftInfo[0].slice(10,);
+                var message = giftInfo[1].slice(9, );
+                const gameIDs = paymentIntentSucceeded.metadata.gameIDs.split(',').map(e => +e);
+                const sender = paymentIntentSucceeded.metadata.uid;
+
+                if (message.length !== 0) {
+                    query = `
+                        INSERT INTO gifts (sender, receiver, gift, message, time)
+                        VALUES (${sender}, ${receiver}, '${JSON.stringify(gameIDs)}', '${message}', '${new Date().toISOString().slice(0, 19).replace('T', ' ')}');
+                    `;
+                } else {
+                    query = `
+                        INSERT INTO gifts (sender, receiver, gift, message, time)
+                        VALUES (${sender}, ${receiver}, '${JSON.stringify(gameIDs)}', NULL, '${new Date().toISOString().slice(0, 19).replace('T', ' ')}');
+                    `;
+                }
+
+                await execQuery(query);
+                break;
+    
+
+    
+            default:
+                // console.log(`Unhandled event type`);
+                break;
+        }
+
+        // Return a 200 response to acknowledge receipt of the event
+        res.send();
+    } catch (err) {
+        console.log(err);
+        res.status(400).send(`Webhook Error: ${err.message}`);
+        return;
+    }
+})
+
 app.route("/create-payment-intent")
     .post(async (req, res) => {
 
-        const { itemIDs } = req.body;
+        const { itemIDs, gift } = req.body;
 
         try {
+
             const totalAmount = Math.round(await Game.calculateOrderAmount(itemIDs) * 100);
 
             // console.log(totalAmount);
         
             // Create a PaymentIntent with the order amount and currency
             const paymentIntent = await stripe.paymentIntents.create({
+                metadata: {
+                    uid: req.session.uid,
+                    gift: gift === undefined ? undefined : `receiver: ${gift.receiver}, message: ${gift.message}`,
+                    gameIDs: `${itemIDs}`
+                },  
                 amount: totalAmount,
                 currency: "usd",
                 // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
@@ -229,10 +293,7 @@ app.route("/create-payment-intent")
 
     });
 
-// app.route('/confirm-payment')
-//     .post(async (req, res) => {
-//         const customer = await stripe.customers.create();
-//     })
+
 
 app.route('/datas/:field/:subfield?')
     .post(async (req, res) => {
@@ -431,7 +492,6 @@ app.route('/search/:type')
                         return e;
                     }));
 
-                    console.log(data);
                     res.send(new Response(0, 0, data).toJSON());
                     return;
             }

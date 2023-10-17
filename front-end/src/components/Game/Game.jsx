@@ -269,22 +269,21 @@ const Game = () => {
             </div>}
 
             {(isSendingGift === true) && <div className="is-sending-gift">
-            <div 
-                style={{
-                    display: "flex", 
-                    width: "41%", 
-                    height: "41%",
-                    backgroundColor: "white",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    borderRadius: "10px",
-                    backgroundColor: "#393939"
-                }}>
-                <SendGiftContext.Provider value={[setReceiver, setMessage, finishMessageAndPay]}>
-                    <SendGift />
-                </SendGiftContext.Provider>
-            </div>
-            
+                <div 
+                    style={{
+                        display: "flex", 
+                        width: "41%", 
+                        height: "41%",
+                        backgroundColor: "white",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        borderRadius: "10px",
+                        backgroundColor: "#393939"
+                    }}>
+                    <SendGiftContext.Provider value={[setReceiver, setMessage, finishMessageAndPay]}>
+                        <SendGift />
+                    </SendGiftContext.Provider>
+                </div>
             </div>}
         </div>
     )

@@ -14,18 +14,6 @@ import { SendGiftContext } from "../../context/SendGift";
 
 function CheckoutForm() {
 
-    const [receiver, giftMessage, gameIDs] = useContext(SendGiftContext);
-
-    async function handleSendGift() {
-        if (receiver) {
-            try {
-                await sendGift(receiver, gameIDs, giftMessage);
-            } catch (error) {
-                console.log(error);
-            }   
-        }
-    }
-
     const stripe = useStripe();
     const elements = useElements();
 
@@ -76,8 +64,7 @@ function CheckoutForm() {
                 setMessage("An unexpected error occurred.");
             }
         } else {
-            await handleSendGift();
-            // await confirmPayment();
+            window.location.reload();
         }
 
         setIsLoading(false);
@@ -118,15 +105,25 @@ function CheckoutForm() {
 const stripePromise = loadStripe("pk_test_51NsNMwJqOqW5UsDeY4l4UeBtEMW1Cz7fUnr5Uk0FloPFFGKAmWs7x3OYeQciF55V3qUzfnICFxQOmWlrh1g21QWx00R8Mc5pHQ");
 
 export default function Checkout({ gameIDs }) {
+
+
     
     const [receiver, message] = useContext(SendGiftContext);
+    console.log(receiver, message);
+
+    var gift;
+    if (receiver === null) gift = undefined;
+    else gift = {
+        receiver: receiver, 
+        message: message
+    }
 
     const [clientSecret, setClientSecret] = useState("");
 
     useEffect(() => {
         (async () => {
             // Create PaymentIntent as soon as the page loads
-            const response = await execRequest("/create-payment-intent", "POST", {itemIDs: gameIDs});
+            const response = await execRequest("/create-payment-intent", "POST", {itemIDs: gameIDs, gift: gift});
             if (response.id === 0) {
                 setClientSecret(response.data.clientSecret);
             } else {
@@ -149,9 +146,7 @@ export default function Checkout({ gameIDs }) {
         <div className="checkout">
             {clientSecret && (
                 <Elements options={options} stripe={stripePromise}>
-                    <SendGiftContext.Provider value={[receiver, message, gameIDs]}>
-                        <CheckoutForm />
-                    </SendGiftContext.Provider>
+                    <CheckoutForm />
                 </Elements>
             )}
         </div>

@@ -7,7 +7,7 @@
     color: white;
 }
 
-.my-cart .title {
+.my-cart > div > .title {
     margin-top: 80px;
 }
 
@@ -118,7 +118,7 @@
     color: aqua;
 }
 
-.my-cart .is-paying {
+.my-cart .is-paying, .my-cart .is-sending-gift {
     display: flex;
     position: absolute;
     top: 0;
