@@ -16,6 +16,9 @@ import Header from '../Header/Header';
 import Cookies from 'js-cookie';
 import { CookiesContext } from '../../context/Cookies';
 import MyCart from '../MyCart/MyCart';
+import AccountSettings from '../AccountSettings/AccountSettings';
+import { checkSession } from '../../support';
+import { UserContext } from '../../context/User';
 
 
 
@@ -39,20 +42,39 @@ const router = createBrowserRouter([
   {
     path: "/cart",
     element: <MyCart />
+  },
+  {
+    path: "/account-settings",
+    element: <AccountSettings />
   }
 ])
 
 function App() {
+  const [isLoading, setIsLoading] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [cookies, setCookies] = useState(JSON.parse(Cookies.get('cart') || "{}"));
   const updateCookies = (newValue) => {
     Cookies.set('cart', JSON.stringify(newValue));
     setCookies(newValue);
   }
+
+  useEffect(() => {
+    if (isLoading) {
+      (async () => {
+        const result = await checkSession();
+        setIsLoggedIn(result.result);
+        setIsLoading(true);
+      }) ();
+    }
+    
+  })
   return <CookiesContext.Provider value={[cookies, updateCookies]}>
-    <div className='App'>
-      <Header />
-      <RouterProvider router={router} />
-    </div>
+    <UserContext.Provider value={[isLoggedIn, setIsLoggedIn]}>
+      <div className='App'>
+        <Header />
+        <RouterProvider router={router} />
+      </div>
+    </UserContext.Provider>
   </CookiesContext.Provider>
   
 }

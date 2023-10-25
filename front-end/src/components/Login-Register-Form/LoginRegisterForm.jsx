@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useContext } from "react";
 
 import { checkSession, register } from "../../support";
 
@@ -8,19 +8,20 @@ import logo from "../../assets/logo.png";
 import arrow from "../../assets/right-arrow.png";
 import { login } from "../../support";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../../context/User";
 
 function LoginRegisterForm() {
     const navigate = useNavigate();
+    const [isLoggedIn, setIsLoggedIn] = useContext(UserContext);
 
+    function handleNavigate () {
+        navigate(-1);
+    }
 
     useEffect(() => {
-        (async () => {
-            const session = await checkSession();
-            if (session.result) {
-                navigate(-1);
-            }
-        }) ();
-        
+        if (isLoggedIn) {
+            handleNavigate();
+        }        
     })
 
     const [isInLogIn, setIsInLogIn] = useState(true);
@@ -31,14 +32,14 @@ function LoginRegisterForm() {
                 <h1 className="form-title">Wibu <img src={logo} alt="" className="logo" /> Store</h1>
             </div>
             {isInLogIn ?
-                <LoginForm setIsInLogIn={setIsInLogIn} navigate={navigate} /> :
-                <RegisterForm setIsInLogIn={setIsInLogIn} navigate={navigate} />
+                <LoginForm setIsInLogIn={setIsInLogIn} setIsLoggedIn={setIsLoggedIn} handleNavigate={handleNavigate} /> :
+                <RegisterForm setIsInLogIn={setIsInLogIn} setIsLoggedIn={setIsLoggedIn} handleNavigate={handleNavigate} />
             }
         </div>
     )
 }
 
-function LoginForm({ setIsInLogIn, navigate }) {
+function LoginForm({ setIsInLogIn, handleNavigate, setIsLoggedIn }) {
 
 
     const [isAbleToLogin, setIsAbleToLogin] = useState(false);
@@ -75,7 +76,8 @@ function LoginForm({ setIsInLogIn, navigate }) {
                 while (!(await checkSession()).result) {
 
                 }
-                window.history.back();
+                setIsLoggedIn(true);
+                handleNavigate();
             } else if (result.id === 4) {
                 document.querySelector(".login-error").innerHTML = result.msg;
                 console.log(result);
@@ -113,7 +115,7 @@ function LoginForm({ setIsInLogIn, navigate }) {
     
 }
 
-function RegisterForm({ setIsInLogIn, navigate }) {
+function RegisterForm({ setIsInLogIn, handleNavigate, setIsLoggedIn }) {
 
     const [isAbleToRegister, setIsAbleToRegister] = useState(false);
 
@@ -178,7 +180,8 @@ function RegisterForm({ setIsInLogIn, navigate }) {
                     document.querySelector(".username-error").innerHTML = "username has been registered!";
                     break;
                 case 0:
-                    navigate(-1);
+                    setIsLoggedIn(true);
+                    handleNavigate();
                     break;
                 default:
                     break;

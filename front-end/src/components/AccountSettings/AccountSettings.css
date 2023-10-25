@@ -1,0 +1,422 @@
+.settings-container {
+    position: absolute;
+    top: 52px;
+    display: flex;
+    flex-direction: row;
+    color: white;
+    width: 100%;
+}
+
+.settings-container .settings-bar {
+    display: flex;
+    flex-direction: column;
+    width: 30%;
+}
+
+.settings-container .settings-bar > div:first-child {
+    margin-top: 50px;
+}
+
+.settings-container .settings-bar > div {
+    margin: 20px 0 20px 37%;
+}
+
+.settings-container .settings-bar > div .title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    margin-left: 20px;
+}
+
+.settings-container .settings-bar > div > div:not(:first-child) {
+    font-size: 1.2rem;
+    padding: 15px 0 15px 20px;
+    margin: 10px 0;
+}
+
+.settings-container .settings-bar > div > div:not(:first-child):hover {
+    cursor: pointer;
+    background-color: #434242;
+}
+
+.settings-container .settings-bar .is-chosen {
+    background-color: #434242;
+}
+
+.settings-container .settings-content {
+    width: 45%;
+    margin-top: 50px;
+}
+
+.settings-container .settings-content > div {
+    margin: 0 30px;
+}
+
+.settings-container .settings-content .my-account {
+    display: flex;
+    flex-direction: column;
+}
+
+.settings-container .settings-content .my-account .profile-picture {
+    display: flex;
+    flex-direction: column;
+}
+
+.settings-container .settings-content .my-account .title {
+    font-size: 1.5rem;
+}
+
+.settings-container .settings-content .my-account .profile .title + div {
+    display: flex;
+    margin: 0 auto;
+    background-color: #D8DAE8;
+    width: 150px;
+    aspect-ratio: 1 / 1;
+    height: auto;
+    color: black;
+    border-radius: 50%;
+    overflow: hidden;
+    align-items: center;
+    justify-content: center;
+}
+
+.settings-container .settings-content .my-account .profile .title + div:hover {
+    cursor: pointer;
+}
+
+.settings-container .settings-content .my-account .profile .title + div > span {
+    display: flex;
+    margin: auto;
+}
+
+.settings-container .settings-content .my-account .profile .title + div > .new-avatar {
+    /* max-width: 100%; */
+    max-height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.settings-container .settings-content .my-account .change-avatar-menu > div {
+    padding: 5px 10px;
+}
+
+.settings-container .settings-content .my-account .change-avatar-menu > div:hover {
+    background-color: #393939;
+    cursor: pointer;
+}
+
+.settings-container .settings-content .my-account .profile-changes {
+    display: grid;
+    grid-template-columns: repeat(2, 300px);
+    grid-column-gap: 100px;
+    grid-row-gap: 30px;
+    margin-top: 100px;
+}
+
+.settings-container .settings-content .my-account .profile-changes .profile-change {
+    display: flex;
+    flex-direction: column;
+}
+
+.settings-container .settings-content .my-account .profile-changes .profile-change > div:first-child {
+    font-size: 1.2rem;
+    margin-bottom: 3px;
+}
+
+.settings-container .settings-content .my-account .profile-changes .profile-change > div:last-child {
+    padding: 10px;
+    background-color: white;
+}
+
+.settings-container .settings-content .my-account .profile-changes .profile-change input {
+    border: none;
+    outline: none;
+    resize: none;
+    width: calc(100% - 10px);
+}
+
+.settings-container .settings-content .my-account .save-btn {
+    display: flex;
+    padding: 10px 0;
+    background-color: #395B64;
+    align-items: center;
+    justify-content: center;
+    width: 90px;
+    font-size: 1.2rem;
+    margin: 30px 0 100px 0;
+}
+
+.settings-container .settings-content .my-account .save-btn:hover {
+    user-select: none;
+    cursor: pointer;
+}
+
+.settings-container .settings-content .break-line {
+    width: 70%;
+    height: 0;
+    border: 1px solid white;
+    display: flex;
+    margin: 0 auto 100px;
+}
+
+.settings-container .settings-content .my-account > .delete-btn {
+    display: flex;
+    padding: 10px 0;
+    background-color: red;
+    width: 170px;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+    margin: 50px 0;
+}
+
+.settings-container .settings-content .my-account > .delete-btn:hover {
+    cursor: pointer;
+    user-select: none;
+}
+
+.settings-container .settings-content .password-security {
+    display: flex;
+    flex-direction: column;
+}
+
+.settings-container .settings-content .password-security .change-password {
+    display: flex;
+    flex-direction: column;
+    width: 40%;
+}
+
+.settings-container .settings-content .password-security .change-password > div {
+    margin-bottom: 50px;
+}
+
+.settings-container .settings-content .password-security .change-password > div > div:first-child {
+    font-size: 1.2rem;
+    margin-bottom: 3px;
+}
+
+.settings-container .settings-content .password-security .change-password > div > div:last-child {
+    padding: 10px;
+    background-color: white;
+}
+
+.settings-container .settings-content .password-security .change-password > div input {
+    border: none;
+    outline: none;
+    resize: none;
+    width: calc(100% - 10px);
+}
+
+.settings-container .settings-content .password-security .change-password .change-password-btn {
+    background-color: #395B64;
+    padding: 10px 0;
+    width: 70%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+    user-select: none;
+}
+
+.settings-container .settings-content .password-security .change-password .change-password-btn.not-allowed {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.settings-container .settings-content .password-security .change-password .change-password-btn.allowed:hover {
+    cursor: pointer;
+}
+
+.settings-container .settings-content .password-security .two-fa-authentication .title {
+    font-size: 1.2rem;
+}
+
+.settings-container .settings-content .password-security .two-fa-authentication .enable-btn {
+    font-size: 1.2rem;
+    display: flex;
+    width: 28%;
+    padding: 10px 0;
+    background-color: #395B64;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+    margin-top: 50px;
+}
+
+.settings-container .settings-content .password-security .two-fa-authentication .enable-btn:hover {
+    cursor: pointer;
+}
+
+.settings-container .settings-content .payment-history .search {
+    display: flex;
+    flex-direction: row;
+}
+
+.settings-container .settings-content .payment-history .search > div:first-child {
+    padding: 5px;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.settings-container .settings-content .payment-history .search > div input {
+    border: none;
+    outline: none;
+    width: calc(100% - 10px);
+    font-size: 1.1rem;
+}
+
+.settings-container .settings-content .payment-history .search > .search-btn {
+    background-color: #395B64;
+    margin-left: 10px;
+    padding: 0 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.1rem;
+}
+
+.settings-container .settings-content .payment-history .search > .search-btn:hover {
+    cursor: pointer;
+}
+
+.settings-container .settings-content .preferences .mature-content-preference, .settings-container .settings-content .preferences .platform-preference  {
+    background-color: #393939;
+    display: flex;
+    padding: 10px;
+    margin: 5px 0;
+}
+
+.settings-container .settings-content .notification {
+    display: flex;
+    padding: 10px;
+    margin: 5px 0;
+}
+
+.settings-container .settings-content .preferences .title, .settings-container .settings-content .notifications .title {
+    font-size: 1.2rem;
+    margin-top: 50px;
+}
+
+.settings-container .settings-content .preferences .title:nth-child(1) {
+    margin-top: 0;
+}
+
+.settings-container .settings-content .preferences .mature-content-preference input[type="checkbox"], .settings-container .settings-content .preferences .platform-preference input[type="checkbox"], .settings-container .settings-content .notification input {
+    position: absolute;
+    opacity: 0;
+}
+
+.settings-container .settings-content .preferences .mature-content-preference > label, .settings-container .settings-content .preferences .platform-preference > label, .settings-container .settings-content .notification > label {
+    position: relative;
+    cursor: pointer;
+    padding: 0;
+}
+
+.settings-container .settings-content .preferences .mature-content-preference > label::before, .settings-container .settings-content .preferences .platform-preference > label::before, .settings-container .settings-content .notification > label::before {
+    content: '';
+    margin-right: 10px;
+    display: inline-block;
+    vertical-align: text-top;
+    width: 20px;
+    height: 20px;
+    background: white;
+    border: 1px solid white;
+}
+
+.settings-container .settings-content .preferences .mature-content-preference input:hover + label::before, .settings-container .settings-content .preferences .platform-preference input:hover + label::before, .settings-container .settings-content .notification input:hover + label::before {
+    background: #393939;
+}
+
+
+
+.settings-container .settings-content .preferences .mature-content-preference input:checked + label::before, .settings-container .settings-content .preferences .platform-preference input:checked + label::before, .settings-container .settings-content .notification input:checked + label::before {
+    background: #393939;
+}
+
+.settings-container .settings-content .preferences .mature-content-preference input:checked + label:after, .settings-container .settings-content .preferences .platform-preference input:checked + label:after, .settings-container .settings-content .notification input:checked + label::after {
+    content: '\2713';
+    position: absolute;
+    left: 4px;
+    top: 1px;
+    color: white;
+}
+
+.settings-container .settings-content .day {
+    font-size: 1.2rem;
+    font-weight: 600;
+    padding-left: 15px;
+    margin-top: 30px;
+}
+
+.settings-container .settings-content .transaction {
+    background-color: #393939;
+    display: flex;
+    padding: 15px;
+    justify-content: space-between;
+    margin: 10px 0;
+}
+
+.settings-container .deleting {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 999;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.settings-container .deleting > div {
+    display: flex;
+    flex-direction: column;
+    background-color: #434242;
+    padding: 10px;
+}
+
+.settings-container .deleting > div .title {
+    font-size: 1.5rem;
+}
+
+.settings-container .deleting > div #verify-box {
+    display: flex;
+    padding: 5px;
+    background-color: white;
+    align-items: center;
+    margin-top: 3px;
+}
+
+.settings-container .deleting > div #verify-box > input {
+    border: none;
+    outline: none;
+    color: red;
+}
+
+.settings-container .deleting > div > div:last-child > .btn {
+    display: flex;
+    padding: 5px 15px;
+    margin: 0 5px;
+}
+
+.settings-container .deleting > div > div:last-child > .btn:hover {
+    cursor: pointer;
+}
+
+.settings-container .deleting > div > div:last-child > .cancel-btn {
+    background-color: white;
+    color: #393939;
+    margin-left: auto;
+}
+
+.settings-container .deleting > div > div:last-child > .delete-btn {
+    background-color: red;
+}
+
+.settings-container .deleting > div > div:last-child > .delete-btn.not-allow {
+    pointer-events: none;
+    opacity: 0.5;
+}

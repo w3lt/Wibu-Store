@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const { execQuery, execGetQuery, execSetQuery, generateNewUID, dateToDatetime, convertPath2IMG } = require('../../support');
 const { salt } = require('../../configs');
+const { Response } = require('../../response');
 
 // Class of user
 class User {
@@ -24,7 +25,7 @@ class User {
                     result[getField] = await this.getAvatar();
                 } else {
                     const data = await execGetQuery(this.#tableName, getField, this.#condition);
-                    if (result.length !== 0) result[getField] = data[0][getField];
+                    if (data.length !== 0) result[getField] = data[0][getField];
                 }
             }))
             
@@ -34,11 +35,39 @@ class User {
         }
     }
 
-    // UID
-    async getUID() {
-        const getField = 'uid';
+    async set(datas) {
         try {
-            const result = await execGetQuery(this.#tableName, getField, this.#condition);
+            for (var field in datas) {
+                if (typeof datas[field] !== 'string') {
+                    const setStatement = `${field}=${datas[field]}`;
+                    await execSetQuery(this.#tableName, setStatement, this.#condition);
+                } else if (field === 'password') {
+                    await this.changePassword(datas[field]);
+                } else {
+                    const setStatement = `${field}='${datas[field]}'`;
+                    await execSetQuery(this.#tableName, setStatement, this.#condition);
+                }
+            }
+            return true;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getTransactionHistory() {
+        try {
+            const query = `
+                SELECT * FROM purchaseHistories
+                WHERE JSON_UNQUOTE(JSON_EXTRACT(data, '$.metadata.uid')) = ${this.#uid};
+            `;
+
+            const result = await Promise.all((await execQuery(query)).map(transaction => {
+                return {
+                    id: transaction.id,
+                    amount: JSON.parse(transaction.data).amount / 100,
+                    time: new Date(transaction.time)
+                }
+            }));
             return result;
         } catch (error) {
             throw error;
@@ -46,11 +75,11 @@ class User {
     }
 
     async getAvatar() {
-        const getField = "avatar_path";
+        const getField = "avatar";
         try {
             const result = await execGetQuery(this.#tableName, getField, this.#condition);
             if (result.length !== 0) {
-                const avatar = convertPath2IMG(`avatars/${result[0].avatar_path === null ? 'default_avatar.png' : result[0].avatar_path}`);
+                const avatar = convertPath2IMG(`avatars/${result[0].avatar === 0 ? 'default_avatar.png' : `user_${this.#uid}.png`}`);
                 return avatar;
             }
         } catch (error) {
@@ -122,17 +151,12 @@ class User {
         }
     }
     
-    async changePassword(oldPassword, newPassword) {
+    async changePassword(newPassword) {
         try {
-            const myHashedPassword = this.#getHashedPassword();
-            const result = bcrypt.compareSync(oldPassword, myHashedPassword);
-            if (result) {
-                const newHashedPassword = bcrypt.hashSync(newPassword, 10);
-                await this.#setHashedPassword(newHashedPassword);
-                return true;
-            } else {
-                return false;
-            }
+            console.log("HEllo World!");
+            const newHashedPassword = bcrypt.hashSync(newPassword, salt);
+            await this.#setHashedPassword(newHashedPassword);
+            return true;
         } catch (error) {
             throw error;
         }
@@ -267,7 +291,7 @@ class User {
                 const registeringQuery = `INSERT INTO users (uid, email, username, password, created_at) 
                     VALUES (${newUID}, '${email}', '${username}', '${hashedPassword}', '${dateToDatetime(new Date())}')`;
                 const result = await execQuery(registeringQuery);
-                if (result) return 0;
+                if (result) return newUID;
             }
         } catch (error) {
             throw error;
@@ -309,6 +333,40 @@ class User {
         } catch (error) {
             throw error;
         }
+    }
+
+    static async deleteAccount(uid) {
+        try {
+            const query = `
+                DELETE FROM users WHERE uid=${uid};
+            `;
+
+            const result = await execQuery(query);
+            if (result) return true;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static destroySession(req, res) {
+        // result = 0 -> no error
+        // result = 1 -> error
+        req.logout(err => {
+            if (err) {
+                console.log(err);
+                res.status(500).json(new Response(1).toJSON());
+            } else {
+                // This function is provided by Passport.js to clear the session
+                req.session.destroy(err => {
+                    if (err) {
+                        console.log(err);
+                        res.status(500).json(new Response(1).toJSON());
+                    } else {
+                        res.send(new Response(0, 0).toJSON());
+                    }
+                });
+            }
+        });
     }
 }
 exports.User = User;

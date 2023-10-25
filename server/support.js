@@ -88,6 +88,26 @@ function base64Encode(file) {
     }
 }
 
+function toBuffer(arrayBuffer) {
+    const buffer = Buffer.alloc(arrayBuffer.byteLength); // Use byteLength instead of length
+    const view = new Uint8Array(arrayBuffer);
+    for (let i = 0; i < buffer.length; ++i) {
+        buffer[i] = view[i];
+    }
+
+    return buffer;
+}
+
+function saveImage(arrayBuffer, path) {
+    try {
+        fs.writeFileSync(path, toBuffer(arrayBuffer));
+        return true;
+    } catch (error) {
+        throw error;
+    }
+}
+exports.saveImage = saveImage;
+
 function fetchRealIMGPath(tmpPath) {
     const ImgPath = `${__dirname}/assets/${tmpPath}`;
     return ImgPath;

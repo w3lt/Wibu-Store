@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 
 import "./Dashboard.css";
-import Header from "../Header/Header";
 import { displayPrice, getDatas, getTopBanners } from "../../support";
 
 import nextBannerSymbol from "../../assets/next_banner.png";
@@ -58,7 +57,6 @@ const Dashboard = () => {
     if (isLoading) return null;
     else return (
         <div className="dashboard">
-            <Header />
             {!isLoading &&
             <div style={{position: "relative", top: "52px", display: "flex", flexDirection: 'column', alignItems: "center", backgroundColor: "#302F2F", color: "white"}}>
                 <div style={{display: "flex", flexDirection: "column", width: "70%"}}>

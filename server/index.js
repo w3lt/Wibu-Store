@@ -7,11 +7,12 @@ const MySQLStore = require('express-mysql-session')(session);
 const Cache = require('./cache').Cache;
 
 const passport = require('passport');
-const { sqlPool, convertPath2IMG, execQuery } = require('./support');
+const { sqlPool, convertPath2IMG, execQuery, saveImage } = require('./support');
 const { Response } = require('./response');
 const { Game } = require('./structure/Game/Game');
 const { SearchClient } = require('./search');
 const LocalStrategy = require('passport-local').Strategy;
+const multer = require('multer');
 
 const stripe = require("stripe")('sk_test_51NsNMwJqOqW5UsDeG7q0qN1nEyj6BhcTYcyaNzXXQhtBM86S0CJ2zCs9lzuY6gEHKfmlLAmkx3VSn4fJk3Tsz29L00nOQTJunp');
 
@@ -65,7 +66,7 @@ passport.use(new LocalStrategy(
 // Cors
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000'); // Replace with the allowed origin(s)
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     next();
@@ -125,8 +126,9 @@ app.route('/register')
         const username = req.body.username;
 
         try {
-            const result = await User.registerNewUser(email, username, password);
-            res.send(new Response(0, result).toJSON());
+            const uid = await User.registerNewUser(email, username, password);
+            req.session.uid = uid;
+            res.send(new Response(0, 0).toJSON());
         } catch (error) {
             console.log(error);
             res.send(new Response(1).toJSON());
@@ -137,22 +139,7 @@ app.route('/register')
 app.route('/logout')
     .post((req, res) => {
         // Clear the user's session and log them out
-        req.logout(err => {
-            if (err) {
-                console.log(err);
-                res.status(500).json(new Response(1).toJSON());
-            } else {
-                // This function is provided by Passport.js to clear the session
-                req.session.destroy(err => {
-                    if (err) {
-                        console.log(err);
-                        res.status(500).json(new Response(1).toJSON());
-                    } else {
-                        res.send(new Response(0, 0).toJSON());
-                    }
-                });
-            }
-        });
+        User.destroySession(req, res);
     });
 
 app.route('/games/:gameID')
@@ -176,14 +163,38 @@ app.route('/games/:gameID')
         }
     });
 
-app.route('/users/:userID/:field')
-    .get(async (req, res) => {
+const upload = multer({dest: `${__dirname}/tmp/`});
+app.route('/user')
+    .post(upload.single('avatar'), async (req, res) => {
+        console.log(req.session.uid);
         try {
             const result = await User.checkSession(req.session.id);
             if (result) {
-                const getField = req.params.field;
-                const data = await new User(req.params.userID).get(getField);
-                res.send(new Response(0, 0, data));
+                const method = req.body.method;
+                if (method === "GET") {
+                    const getField = req.body.getField;
+                    const data = await new User(req.session.uid).get(...getField);
+                    res.send(new Response(0, 0, data).toJSON());
+                } else {
+                    const data = req.body;
+
+                    const tmpFilePath = req.file?.path;
+
+                    if (tmpFilePath) {
+                        if (req.file.mimetype.substring(0, 5) === "image") {
+                            const file = await fs.readFile(tmpFilePath);
+                            await fs.writeFile(`${__dirname}/assets/avatars/user_${req.session.uid}.png`, file);
+                            data['avatar'] = true;
+                        } else {
+                            data['avatar'] = false;
+                        }
+                        await fs.unlink(tmpFilePath);
+                    }
+
+                    const setResult = await new User(req.session.uid).set(data);
+                    res.send(new Response(0, 0, setResult).toJSON());
+                }
+                
             } else {
                 res.send(new Response(0, 5).toJSON());
             }
@@ -191,7 +202,52 @@ app.route('/users/:userID/:field')
             console.log(error);
             res.send(new Response(1).toJSON());
         }
-        
+    })
+    .delete(async (req, res) => {
+        console.log("Hello World!");
+        try {
+            const result = User.checkSession(req.session.id);
+            if (result) {
+                const data = await User.deleteAccount(req.session.uid);
+                User.destroySession(req, res);
+                res.send(new Response(0, 0, data).toJSON());
+            }
+        } catch (error) {
+            console.log(error);
+            res.send(new Response(1).toJSON());
+        }
+    })
+
+app.route('/transaction')
+    .get(async (req, res) => {
+        try {
+            const result = await User.checkSession(req.session.id);
+            if (result) {
+                const transactionHistory = await (new User(req.session.uid)).getTransactionHistory();
+                res.send(new Response(0, 0, transactionHistory).toJSON());
+            } else {
+                res.send(new Response(0, 5).toJSON());
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    })
+
+app.route('/users/:userID/:field')
+    .get(async (req, res) => {
+        try {
+            const result = await User.checkSession(req.session.id);
+            if (result) {
+                const getField = req.params.field;
+                const data = await new User(req.params.userID).get(getField);
+                res.send(new Response(0, 0, data).toJSON());
+            } else {
+                res.send(new Response(0, 5).toJSON());
+            }
+        } catch (error) {
+            console.log(error);
+            res.send(new Response(1).toJSON());
+        }
     });
 
 // This is your Stripe CLI webhook secret for testing your endpoint locally.

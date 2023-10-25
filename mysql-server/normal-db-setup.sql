@@ -1,10 +1,12 @@
 -- create users table
 CREATE TABLE users (
     uid INT UNSIGNED,
-    avatar_path VARCHAR(255),
+    avatar BOOLEAN DEFAULT FALSE,
     email VARCHAR(255),
+    fullname VARCHAR(255),
     username VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
+    tel varchar(11),
     gender TINYINT,
     dob DATETIME,
     created_at DATETIME NOT NULL,

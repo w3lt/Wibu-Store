@@ -10,7 +10,7 @@ async function execRequest() {
     let headers;
     let body = arguments[2]
 
-    if (method === "GET") {
+    if (method === "GET" || method === "DELETE") {
         headers = undefined;
     } else if (method === "POST") {
         headers = {'Content-Type': 'application/json'};
@@ -207,9 +207,13 @@ async function getLove(gameID) {
     }
 }
 
-async function sendGift(receiver, gift, message) {
+function displayPrice(price) {
+    return (price === 0 ? "Free" : `$${price}`)
+}
+
+async function getUserDatas(...getField) {
     try {
-        const result = await execRequest("/gift", "POST", {receiver: receiver, gift: gift, message: message});
+        const result = await execRequest("/user", "POST", {method: "GET", getField: getField});
         if (result.id === 0) return result.data;
         else console.log(result.msg);
     } catch (error) {
@@ -217,18 +221,50 @@ async function sendGift(receiver, gift, message) {
     }
 }
 
-async function confirmPayment() {
+async function submitUserProfile(formData) {
     try {
-        const result = await execRequest("/confirm-payment", "POST");
-
+        const result = await fetch(`${server_main_route}/user`, {
+            method: "POST",
+            credentials: "include",
+            body: formData
+        })
+        const data = await result.json();
+        if (data.id === 0) return true;
+        else console.log(data.msg);
     } catch (error) {
         console.log(error);
     }
 }
 
-function displayPrice(price) {
-    return (price === 0 ? "Free" : `$${price}`)
+async function changePassword(newPassword) {
+    try {
+        const result = await execRequest("/user", "POST", {password: newPassword});
+        if (result.id === 0) return true;
+        else console.log(result.msg); 
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+async function fetchTransactionList() {
+    try {
+        const result = await execRequest('/transaction', 'GET');
+        if (result.id === 0) return result.data;
+        else console.log(result.msg);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+async function requestDeleteAccount() {
+    try {
+        const result = await execRequest('/user', 'DELETE');
+        if (result.id === 0) return result.data;
+        else console.log(result.msg);
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 export {checkSession, login, register, logout, execRequest, fetchGameInfor, fetchUserInfor,
-        getTopBanners, getDatas, displayPrice, search, love, getLove, sendGift, confirmPayment};
+        getTopBanners, getDatas, displayPrice, search, love, getLove, getUserDatas, submitUserProfile, changePassword, fetchTransactionList, requestDeleteAccount};

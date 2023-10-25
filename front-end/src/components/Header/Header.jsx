@@ -130,7 +130,7 @@ export default function Header() {
                     </div>
                     
                     {(isDropped === true) && <div className="drop-box">
-                        <div>Setting</div>
+                        <div onClick={() => {window.location.href = "/account-settings"}}>Account Settings</div>
                         <div onClick={async () => {await logout(); window.location.href = window.location.href;}}>Logout</div>
                     </div>}
                 </div> :
