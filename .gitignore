@@ -5,3 +5,4 @@ project_work_daily.txt
 **/.DS_Store
 server/assets/*
 **/nodemon.json
+**/tmp
