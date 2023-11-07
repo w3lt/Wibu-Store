@@ -3,7 +3,7 @@ This store sells wibu game (for everyone ofc) :>
 
 ### Install instruction
 ```
-git clone gh repo clone riverlis/Wibu-Store
+git clone https://github.com/riverlis/Wibu-Store.git
 cd Wibu-Store
 touch key.txt # Create a stripe key file
 ```
