@@ -5,7 +5,7 @@ This store sells wibu game (for everyone ofc) :>
 ```
 git clone https://github.com/riverlis/Wibu-Store.git
 cd Wibu-Store
-touch key.txt # Create a stripe key file
+touch key.txt
 ```
 Then open the key.txt file (by whichever text editor you want) and the push in it the stripe public key and stripe secret key. First, you push the secret key and then the public key in the next line. Please be careful with the order. Here is and example:
 ```
