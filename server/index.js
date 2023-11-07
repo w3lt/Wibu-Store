@@ -13,8 +13,9 @@ const { Game } = require('./structure/Game/Game');
 const { SearchClient } = require('./search');
 const LocalStrategy = require('passport-local').Strategy;
 const multer = require('multer');
+require('dotenv').config();
 
-const stripe = require("stripe")('sk_test_51NsNMwJqOqW5UsDeG7q0qN1nEyj6BhcTYcyaNzXXQhtBM86S0CJ2zCs9lzuY6gEHKfmlLAmkx3VSn4fJk3Tsz29L00nOQTJunp');
+const stripe = require("stripe")(process.env.STRIPE_KEY);
 
 const User = require('./structure/User/User').User;
 

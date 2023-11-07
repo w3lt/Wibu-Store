@@ -7,7 +7,7 @@ import {
 
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
-import { confirmPayment, execRequest, sendGift } from "../../support";
+import { execRequest } from "../../support";
 
 import "./Checkout.css";
 import { SendGiftContext } from "../../context/SendGift";
@@ -102,7 +102,7 @@ function CheckoutForm() {
 // Make sure to call loadStripe outside of a component’s render to avoid
 // recreating the Stripe object on every render.
 // This is your test publishable API key.
-const stripePromise = loadStripe("pk_test_51NsNMwJqOqW5UsDeY4l4UeBtEMW1Cz7fUnr5Uk0FloPFFGKAmWs7x3OYeQciF55V3qUzfnICFxQOmWlrh1g21QWx00R8Mc5pHQ");
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_KEY);
 
 export default function Checkout({ gameIDs }) {
 

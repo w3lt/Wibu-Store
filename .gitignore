@@ -6,3 +6,5 @@ project_work_daily.txt
 server/assets/*
 **/nodemon.json
 **/tmp
+**/.env
+key.txt
