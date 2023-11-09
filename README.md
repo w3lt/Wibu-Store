@@ -15,7 +15,8 @@ pk_test_51NsNMwJqOqW5UsDeY4l4UeBtEMW1Cz7fUnr5Uk0FloPFFGKAmWs7x3OYeQciF55V3qUzfnI
 ```
 Then save it, and create docker compose by (if you did not install docker, please visit [docker](https://www.docker.com)):
 ```
-docker-compose up -d
+chmod +x test.sh
+./test.sh
 ```
 Here we go!
 Good luck :>
