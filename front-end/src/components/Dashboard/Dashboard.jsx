@@ -23,7 +23,7 @@ const Dashboard = () => {
     const [bestDealForYou, setBestDealForYou] = useState(Array(5).fill({}));
     const [freeToPlay, setFreeToPlay] = useState(Array(5).fill(null));
 
-    const otherTags = ["News", "Trending", "Top Seller", "Top Upcoming"];
+    const otherTags = ["News", "Top Seller"];
     const [otherTagsData, setOtherTagsData] = useState(null);
     const [selectedTag, setSelectedTag] = useState(0);
 

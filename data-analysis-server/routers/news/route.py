@@ -23,6 +23,7 @@ def getNews(number):
 
 @router.post("/games/news")
 def read_item(body: Body):
+    print("hello news!")
     try:
         myNews = getNews(body.number)
         return myNews

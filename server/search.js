@@ -8,7 +8,7 @@ class SearchClient {
 
     async search(keyword, type) {
         try {
-            const response = await fetch(`${this.#serverURL}/${type}`, {
+            const response = await fetch(`${this.#serverURL}/${type ? type : ""}`, {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify({keyword: keyword})

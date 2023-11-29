@@ -205,7 +205,6 @@ app.route('/user')
         }
     })
     .delete(async (req, res) => {
-        console.log("Hello World!");
         try {
             const result = User.checkSession(req.session.id);
             if (result) {
@@ -488,8 +487,7 @@ app.route('/datas/:field/:subfield?')
             await cache.setData(field, targetData);
         } catch (error) {
             console.log("Error setting data redis: ", error);
-        }
-        
+        } 
     })
 
 app.route('/top-banners')
